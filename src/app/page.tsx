@@ -41,7 +41,7 @@ import {
   ControllerProps,
   FieldPath,
   FieldValues,
-   
+  FormProvider,
   useFormContext,
 } from 'react-hook-form';
 import * as LabelPrimitive from '@radix-ui/react-label';
@@ -2488,7 +2488,7 @@ interface DashboardProps {
 }
 // toaster==============================================
 
-  function Toaster() {
+ export function Toaster() {
   const { toasts } = useToast();
 
   return (
@@ -3281,7 +3281,7 @@ ${colorConfig
   );
 };
 
-const ChartTooltip = RechartsPrimitive.Tooltip;
+// const ChartTooltip = RechartsPrimitive.Tooltip;
 
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
@@ -3437,7 +3437,7 @@ const ChartTooltipContent = React.forwardRef<
 );
 ChartTooltipContent.displayName = 'ChartTooltip';
 
-const ChartLegend = RechartsPrimitive.Legend;
+ export const ChartLegend = RechartsPrimitive.Legend;
 
 const ChartLegendContent = React.forwardRef<
   HTMLDivElement,
@@ -3558,7 +3558,7 @@ Textarea.displayName = 'Textarea';
  
 
  
-const Tabs = TabsPrimitive.Root;
+// const Tabs = TabsPrimitive.Root;
 
 const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
@@ -3984,7 +3984,7 @@ const badgeVariants = cva(
   }
 );
 
-  interface BadgeProps
+  export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof badgeVariants> {}
 
@@ -3993,7 +3993,9 @@ function Badge({ className, variant, ...props }: BadgeProps) {
     <div className={cn(badgeVariants({ variant }), className)} {...props} />
   );
 }
-// accordion-------------------
+export { Badge, badgeVariants };
+
+// // accordion-------------------
  
 
  
@@ -4045,6 +4047,8 @@ const AccordionContent = React.forwardRef<
 ));
 
 AccordionContent.displayName = AccordionPrimitive.Content.displayName;
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };
+
 // avatarrrr-------------------
   
 const Avatar = React.forwardRef<
@@ -4090,8 +4094,8 @@ const AvatarFallback = React.forwardRef<
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 // AspectRatio
 
-const AspectRatio = AspectRatioPrimitive.Root;
-
+ const AspectRatio = AspectRatioPrimitive.Root;
+ export { AspectRatio };
 
   // Breadcrumb=========================
  
@@ -4197,11 +4201,13 @@ BreadcrumbEllipsis.displayName = 'BreadcrumbElipssis';
   // CollapsibleContent-----------------------------------------
 
  
-// const Collapsible = CollapsiblePrimitive.Root;
+const Collapsible = CollapsiblePrimitive.Root;
 
-// const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger;
+const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger;
 
-// const CollapsibleContent = CollapsiblePrimitive.CollapsibleContent;
+const CollapsibleContent = CollapsiblePrimitive.CollapsibleContent;
+export { Collapsible, CollapsibleTrigger, CollapsibleContent };
+
   //  Progress-----------------------------------
 
 
@@ -4333,17 +4339,17 @@ const DialogDescription = React.forwardRef<
 ));
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
-function Skeleton({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn('animate-pulse rounded-md bg-muted', className)}
-      {...props}
-    />
-  );
-}
+// function Skeleton({
+//   className,
+//   ...props
+// }: React.HTMLAttributes<HTMLDivElement>) {
+//   return (
+//     <div
+//       className={cn('animate-pulse rounded-md bg-muted', className)}
+//       {...props}
+//     />
+//   );
+// }
  //  Drawer-----------------------------------
 
 
@@ -4493,17 +4499,17 @@ const Command = React.forwardRef<
 ));
 Command.displayName = CommandPrimitive.displayName;
 
-// const CommandDialog = ({ children, ...props }: DialogProps) => {
-//   return (
-//     <Dialog {...props}>
-//       <DialogContent className="overflow-hidden p-0 shadow-lg">
-//         <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
-//           {children}
-//         </Command>
-//       </DialogContent>
-//     </Dialog>
-//   );
-// };
+   const CommandDialog = ({ children, ...props }: DialogProps) => {
+  return (
+    <DialogPrimitive.Root {...props}>
+      <DialogContent className="overflow-hidden p-0 shadow-lg">
+        <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
+          {children}
+        </Command>
+      </DialogContent>
+    </DialogPrimitive.Root>
+  );
+};
 
 const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
@@ -4609,6 +4615,17 @@ const CommandShortcut = ({
   );
 };
 CommandShortcut.displayName = 'CommandShortcut';
+export {
+  Command,
+  CommandDialog,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandShortcut,
+  CommandSeparator,
+};
 
   // DropdownMenu-----------------------------------------
 
@@ -4652,11 +4669,11 @@ RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
 
   // DropdownMenu-----------------------------------------
 
-const Select = SelectPrimitive.Root;
+// const Select = SelectPrimitive.Root;
 
-const SelectGroup = SelectPrimitive.Group;
+// const SelectGroup = SelectPrimitive.Group;
 
-const SelectValue = SelectPrimitive.Value;
+// const SelectValue = SelectPrimitive.Value;
 
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
@@ -5045,10 +5062,9 @@ Label.displayName = LabelPrimitive.Root.displayName;
  
   // Form-----------------------------------------
 
-
-
+  
  
-// const Form = FormProvider;
+const Form = FormProvider;
 
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
@@ -5061,7 +5077,7 @@ const FormFieldContext = React.createContext<FormFieldContextValue>(
   {} as FormFieldContextValue
 );
 
-const FormField = <
+ const FormField = <
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >({
@@ -5199,7 +5215,16 @@ const FormMessage = React.forwardRef<
   );
 });
 FormMessage.displayName = 'FormMessage';
- 
+export {
+  useFormField,
+  Form,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+  FormField,
+};
   // HoverCardPrimitive-----------------------------------------
 
  
@@ -5330,7 +5355,7 @@ const ResizablePanelGroup = ({
   />
 );
 
-// const ResizablePanel = ResizablePrimitive.Panel;
+const ResizablePanel = ResizablePrimitive.Panel;
 
 const ResizableHandle = ({
   withHandle,
@@ -5353,6 +5378,7 @@ const ResizableHandle = ({
     )}
   </ResizablePrimitive.PanelResizeHandle>
 );
+export { ResizablePanelGroup, ResizablePanel, ResizableHandle };
 
    // MenubarPrimitive-----------------------------------------
 
