@@ -15,14 +15,10 @@ import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 const inter = Inter({ subsets: ['latin'] });
 
 import { clsx, type ClassValue } from 'clsx';
-// import * as AccordionPrimitive from '@radix-ui/react-accordion';
-import { ChevronDown,ChevronUp } from 'lucide-react';
+ import { ChevronDown,ChevronUp } from 'lucide-react';
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
-// import * as AspectRatioPrimitive from '@radix-ui/react-aspect-ratio';
-import { MoreHorizontal } from 'lucide-react';
-// import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
-// import { type DialogProps } from '@radix-ui/react-dialog';
-import { Command as CommandPrimitive } from 'cmdk';
+ import { MoreHorizontal } from 'lucide-react';
+ import { Command as CommandPrimitive } from 'cmdk';
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
 import { OTPInput, OTPInputContext } from 'input-otp';
 import { Dot } from 'lucide-react';
@@ -32,19 +28,11 @@ import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu';
  import * as ProgressPrimitive from '@radix-ui/react-progress';
  import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
  import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
-  // import { GripVertical } from 'lucide-react';
-  // import * as ResizablePrimitive from 'react-resizable-panels';
+ 
 import { twMerge } from 'tailwind-merge';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Drawer as DrawerPrimitive } from 'vaul';
-// import {
-//   Controller,
-//   ControllerProps,
-//   FieldPath,
-//   FieldValues,
-//   FormProvider,
-//   useFormContext,
-// } from 'react-hook-form';
+ 
 import * as LabelPrimitive from '@radix-ui/react-label';
 import {   Circle } from 'lucide-react';
 import useEmblaCarousel, {
@@ -60,7 +48,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { DayPicker } from 'react-day-picker';
 import { motion } from 'framer-motion';
 import { format, isPast, isToday } from 'date-fns';
-  import { FiCalendar, FiUsers, FiUser,   FiFlag } from 'react-icons/fi';
+  import { FiCalendar, FiUsers, FiUser,   FiFlag,  } from 'react-icons/fi';
    import { FiTarget, FiMenu, FiX, FiSun, FiMoon, FiPlus } from 'react-icons/fi';
    import Link from 'next/link';
   import { usePathname } from 'next/navigation';
@@ -544,15 +532,10 @@ const GoalContext = createContext<GoalContextProps | undefined>(undefined);
   }
   return context;
 }
-// usetoast-------------------------------------import * as React from 'react';
-// Update the import path to the correct location or ensure the module exists
-// Update the import path to the correct location or create the missing file
- 
- 
- 
 
  
-// const ToastProvider = ToastPrimitives.Provider;
+ 
+ 
 
 const ToastViewport = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Viewport>,
@@ -1055,34 +1038,37 @@ const aboutText = `A software developer skilled in designing, developing, and im
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 mt-20 pt-50 overflow-y-auto pt-40"
+          className="absolute top-5  inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-3 mt-20  pt-200 overflow-y-auto lg:pt-40"
           onClick={onClose}
+
         >
+            
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: 'spring', damping: 25, stiffness: 500 }}
-            className="bg-white dark:bg-slate-800 rounded-lg max-w-4xl w-full shadow-xl overflow-hidden"
+            className="bg-white dark:bg-slate-800 rounded-lg max-w-4xl w-full shadow-xl overflow-auto"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex justify-end p-4">
               <button
                 onClick={onClose}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 pt-70  lg:pt-160 dark:hover:text-gray-200"
               >
                 <FiX className="h-6 w-6" />
               </button>
+            
             </div>
 
-            <div className="max-w-4xl mx-auto px-4 pb-8">
-              <div className=" overflow-hidden rounded-lg pt-80 justify-center flex items-center" >
+            <div className="max-w-4xl mx-auto px-4 pb-8 overflow-y-auto" >
+              <div className=" overflow-y-auto rounded-lg  justify-center flex items-center" >
                 <Image
                   src="https://i.postimg.cc/yxwg4krP/IMG-0667-removebg.png"
                   alt="Profile"
                   className="  object-contain center rounded-lg"
                   width={500}
-                  height={500}
+                  height={400}
                 />
               </div>
 
@@ -1342,9 +1328,11 @@ interface NavbarProps {
 
     function Footer() {
   const currentYear = new Date().getFullYear();
+  const [isTeamsModalOpen, setIsTeamsModalOpen] = useState(false);
 
   return (
-    <footer className="bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 mt-auto"  suppressHydrationWarning>
+    <>
+ <footer className="bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 mt-auto"  suppressHydrationWarning>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand and description */}
@@ -1411,7 +1399,9 @@ interface NavbarProps {
                 </a>
               </motion.li>
               <motion.li whileHover={{ x: 2 }}>
-                <a href='' className="text-sm text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400" suppressHydrationWarning>
+                <a href='' className="text-sm text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400"    
+                onClick={() => setIsTeamsModalOpen(true)}
+                   suppressHydrationWarning >
                   Teams
                 </a   >
               </motion.li>
@@ -1458,7 +1448,13 @@ interface NavbarProps {
           </p>
         </div>
       </div>
+<TeamsModal isOpen={isTeamsModalOpen} onClose={() => setIsTeamsModalOpen(false)} />
+
     </footer>
+
+    </>
+   
+    
   );
 }
 // filter====================================
@@ -2734,10 +2730,7 @@ Button.displayName = 'Button';
   );
   PaginationEllipsis.displayName = 'PaginationEllipsis';
   
-  
-// const AlertDialog = AlertDialogPrimitive.Root;
-
-// const AlertDialogTrigger = AlertDialogPrimitive.Trigger;
+ 
 
 const AlertDialogPortal = AlertDialogPrimitive.Portal;
 
@@ -3971,92 +3964,7 @@ const CardFooter = React.forwardRef<
   />
 ));
 CardFooter.displayName = 'CardFooter';
-// badgeVariants------------------
-// const badgeVariants = cva(
-//   'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
-//   {
-//     variants: {
-//       variant: {
-//         default:
-//           'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
-//         secondary:
-//           'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
-//         destructive:
-//           'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
-//         outline: 'text-foreground',
-//       },
-//     },
-//     defaultVariants: {
-//       variant: 'default',
-//     },
-//   }
-// );
-
-//   export interface BadgeProps
-//   extends React.HTMLAttributes<HTMLDivElement>,
-//     VariantProps<typeof badgeVariants> {}
-
-// function Badge({ className, variant, ...props }: BadgeProps) {
-//   return (
-//     <div className={cn(badgeVariants({ variant }), className)} {...props} />
-//   );
-// }
-// export { Badge, badgeVariants };
-
-// // // accordion-------------------
  
-
- 
-// const Accordion = AccordionPrimitive.Root;
-
-// const AccordionItem = React.forwardRef<
-//   React.ElementRef<typeof AccordionPrimitive.Item>,
-//   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
-// >(({ className, ...props }, ref) => (
-//   <AccordionPrimitive.Item
-//     ref={ref}
-//     className={cn('border-b', className)}
-//     {...props}
-//   />
-// ));
-// AccordionItem.displayName = 'AccordionItem';
-
-// const AccordionTrigger = React.forwardRef<
-//   React.ElementRef<typeof AccordionPrimitive.Trigger>,
-//   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
-// >(({ className, children, ...props }, ref) => (
-//   <AccordionPrimitive.Header className="flex">
-//     <AccordionPrimitive.Trigger
-//       ref={ref}
-//       className={cn(
-//         'flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180',
-//         className
-//       )}
-//       {...props}
-//     >
-//       {children}
-//       <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
-//     </AccordionPrimitive.Trigger>
-//   </AccordionPrimitive.Header>
-// ));
-// AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
-
-// const AccordionContent = React.forwardRef<
-//   React.ElementRef<typeof AccordionPrimitive.Content>,
-//   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
-// >(({ className, children, ...props }, ref) => (
-//   <AccordionPrimitive.Content
-//     ref={ref}
-//     className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
-//     {...props}
-//   >
-//     <div className={cn('pb-4 pt-0', className)}>{children}</div>
-//   </AccordionPrimitive.Content>
-// ));
-
-// AccordionContent.displayName = AccordionPrimitive.Content.displayName;
-// export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };
-
 // avatarrrr-------------------
   
 const Avatar = React.forwardRef<
@@ -4100,13 +4008,7 @@ const AvatarFallback = React.forwardRef<
   />
 ));
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
-// AspectRatio
 
-//  const AspectRatio = AspectRatioPrimitive.Root;
-//  export { AspectRatio };
-
-  // Breadcrumb=========================
- 
 const Breadcrumb = React.forwardRef<
   HTMLElement,
   React.ComponentPropsWithoutRef<'nav'> & {
@@ -4206,15 +4108,7 @@ const BreadcrumbEllipsis = ({
   </span>
 );
 BreadcrumbEllipsis.displayName = 'BreadcrumbElipssis';
-  // CollapsibleContent-----------------------------------------
-
  
-// const Collapsible = CollapsiblePrimitive.Root;
-
-// const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger;
-
-// const CollapsibleContent = CollapsiblePrimitive.CollapsibleContent;
-// export { Collapsible, CollapsibleTrigger, CollapsibleContent };
 
   //  Progress-----------------------------------
 
@@ -4241,18 +4135,10 @@ const Progress = React.forwardRef<
 Progress.displayName = ProgressPrimitive.Root.displayName;
 
  
-  //  Dialog-----------------------------------
-
- 
- 
-// const Dialog = DialogPrimitive.Root;
-
-// const DialogTrigger = DialogPrimitive.Trigger;
 
 const DialogPortal = DialogPrimitive.Portal;
 
-// const DialogClose = DialogPrimitive.Close;
-
+ 
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
@@ -4397,12 +4283,10 @@ const Drawer = ({
 );
 Drawer.displayName = 'Drawer';
 
-// const DrawerTrigger = DrawerPrimitive.Trigger;
-
+ 
 const DrawerPortal = DrawerPrimitive.Portal;
 
-// const DrawerClose = DrawerPrimitive.Close;
-
+ 
 const DrawerOverlay = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Overlay>
@@ -4507,18 +4391,7 @@ const Command = React.forwardRef<
 ));
 Command.displayName = CommandPrimitive.displayName;
 
-//    const CommandDialog = ({ children, ...props }: DialogProps) => {
-//   return (
-//     <DialogPrimitive.Root {...props}>
-//       <DialogContent className="overflow-hidden p-0 shadow-lg">
-//         <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
-//           {children}
-//         </Command>
-//       </DialogContent>
-//     </DialogPrimitive.Root>
-//   );
-// };
-
+ 
 const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
@@ -4623,20 +4496,7 @@ const CommandShortcut = ({
   );
 };
 CommandShortcut.displayName = 'CommandShortcut';
-// export {
-//   Command,
-//   CommandDialog,
-//   CommandInput,
-//   CommandList,
-//   CommandEmpty,
-//   CommandGroup,
-//   CommandItem,
-//   CommandShortcut,
-//   CommandSeparator,
-// };
-
-  // DropdownMenu-----------------------------------------
-
+ 
  
  
 const RadioGroup = React.forwardRef<
@@ -4674,14 +4534,7 @@ const RadioGroupItem = React.forwardRef<
 });
 RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
  
-
-  // DropdownMenu-----------------------------------------
-
-// const Select = SelectPrimitive.Root;
-
-// const SelectGroup = SelectPrimitive.Group;
-
-// const SelectValue = SelectPrimitive.Value;
+ 
 
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
@@ -4863,23 +4716,7 @@ const ScrollBar = React.forwardRef<
 ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName;
 
  
-  // DropdownMenu-----------------------------------------
-
-
-// import { formatDistanceToNow } from 'date-fns/formatDistanceToNow'; // Uncomment if needed
-
-// const DropdownMenu = DropdownMenuPrimitive.Root;
-
-// const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
-
-// const DropdownMenuGroup = DropdownMenuPrimitive.Group;
-
-// const DropdownMenuPortal = DropdownMenuPrimitive.Portal;
-
-// const DropdownMenuSub = DropdownMenuPrimitive.Sub;
-
-// const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
-
+ 
 const DropdownMenuSubTrigger = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.SubTrigger>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubTrigger> & {
@@ -5066,181 +4903,6 @@ const Label = React.forwardRef<
 ));
 Label.displayName = LabelPrimitive.Root.displayName;
 
- 
- 
-  // Form-----------------------------------------
-
-  
- 
-// const Form = FormProvider;
-
-// type FormFieldContextValue<
-//   TFieldValues extends FieldValues = FieldValues,
-//   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
-// > = {
-//   name: TName;
-// };
-
-// const FormFieldContext = React.createContext<FormFieldContextValue>(
-//   {} as FormFieldContextValue
-// );
-
-//  const FormField = <
-//   TFieldValues extends FieldValues = FieldValues,
-//   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
-// >({
-//   ...props
-// }: ControllerProps<TFieldValues, TName>) => {
-//   return (
-//     <FormFieldContext.Provider value={{ name: props.name }}>
-//       <Controller {...props} />
-//     </FormFieldContext.Provider>
-//   );
-// };
-
-// const useFormField = () => {
-//   const fieldContext = React.useContext(FormFieldContext);
-//   const itemContext = React.useContext(FormItemContext);
-//   const { getFieldState, formState } = useFormContext();
-
-//   const fieldState = getFieldState(fieldContext.name, formState);
-
-//   if (!fieldContext) {
-//     throw new Error('useFormField should be used within <FormField>');
-//   }
-
-//   const { id } = itemContext;
-
-//   return {
-//     id,
-//     name: fieldContext.name,
-//     formItemId: `${id}-form-item`,
-//     formDescriptionId: `${id}-form-item-description`,
-//     formMessageId: `${id}-form-item-message`,
-//     ...fieldState,
-//   };
-// };
-
-// type FormItemContextValue = {
-//   id: string;
-// };
-
-// const FormItemContext = React.createContext<FormItemContextValue>(
-//   {} as FormItemContextValue
-// );
-
-// const FormItem = React.forwardRef<
-//   HTMLDivElement,
-//   React.HTMLAttributes<HTMLDivElement>
-// >(({ className, ...props }, ref) => {
-//   const id = React.useId();
-
-//   return (
-//     <FormItemContext.Provider value={{ id }}>
-//       <div ref={ref} className={cn('space-y-2', className)} {...props} />
-//     </FormItemContext.Provider>
-//   );
-// });
-// FormItem.displayName = 'FormItem';
-
-// const FormLabel = React.forwardRef<
-//   React.ElementRef<typeof LabelPrimitive.Root>,
-//   React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
-// >(({ className, ...props }, ref) => {
-//   const { error, formItemId } = useFormField();
-
-//   return (
-//     <Label
-//       ref={ref}
-//       className={cn(error && 'text-destructive', className)}
-//       htmlFor={formItemId}
-//       {...props}
-//     />
-//   );
-// });
-// FormLabel.displayName = 'FormLabel';
-
-// const FormControl = React.forwardRef<
-//   React.ElementRef<typeof Slot>,
-//   React.ComponentPropsWithoutRef<typeof Slot>
-// >(({ ...props }, ref) => {
-//   const { error, formItemId, formDescriptionId, formMessageId } =
-//     useFormField();
-
-//   return (
-//     <Slot
-//       ref={ref}
-//       id={formItemId}
-//       aria-describedby={
-//         !error
-//           ? `${formDescriptionId}`
-//           : `${formDescriptionId} ${formMessageId}`
-//       }
-//       aria-invalid={!!error}
-//       {...props}
-//     />
-//   );
-// });
-// FormControl.displayName = 'FormControl';
-
-// const FormDescription = React.forwardRef<
-//   HTMLParagraphElement,
-//   React.HTMLAttributes<HTMLParagraphElement>
-// >(({ className, ...props }, ref) => {
-//   const { formDescriptionId } = useFormField();
-
-//   return (
-//     <p
-//       ref={ref}
-//       id={formDescriptionId}
-//       className={cn('text-sm text-muted-foreground', className)}
-//       {...props}
-//     />
-//   );
-// });
-// FormDescription.displayName = 'FormDescription';
-
-// const FormMessage = React.forwardRef<
-//   HTMLParagraphElement,
-//   React.HTMLAttributes<HTMLParagraphElement>
-// >(({ className, children, ...props }, ref) => {
-//   const { error, formMessageId } = useFormField();
-//   const body = error ? String(error?.message) : children;
-
-//   if (!body) {
-//     return null;
-//   }
-
-//   return (
-//     <p
-//       ref={ref}
-//       id={formMessageId}
-//       className={cn('text-sm font-medium text-destructive', className)}
-//       {...props}
-//     >
-//       {body}
-//     </p>
-//   );
-// });
-// FormMessage.displayName = 'FormMessage';
-// export {
-//   useFormField,
-//   Form,
-//   FormItem,
-//   FormLabel,
-//   FormControl,
-//   FormDescription,
-//   FormMessage,
-//   FormField,
-// };
-  // HoverCardPrimitive-----------------------------------------
-
- 
- 
-// const HoverCard = HoverCardPrimitive.Root;
-
-// const HoverCardTrigger = HoverCardPrimitive.Trigger;
-
 const HoverCardContent = React.forwardRef<
   React.ElementRef<typeof HoverCardPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof HoverCardPrimitive.Content>
@@ -5344,62 +5006,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   }
 );
 Input.displayName = 'Input';
-
-
-  // ResizableHandle-----------------------------------------
-
-
- 
-// const ResizablePanelGroup = ({
-//   className,
-//   ...props
-// }: React.ComponentProps<typeof ResizablePrimitive.PanelGroup>) => (
-//   <ResizablePrimitive.PanelGroup
-//     className={cn(
-//       'flex h-full w-full data-[panel-group-direction=vertical]:flex-col',
-//       className
-//     )}
-//     {...props}
-//   />
-// );
-
-// const ResizablePanel = ResizablePrimitive.Panel;
-
-// const ResizableHandle = ({
-//   withHandle,
-//   className,
-//   ...props
-// }: React.ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> & {
-//   withHandle?: boolean;
-// }) => (
-//   <ResizablePrimitive.PanelResizeHandle
-//     className={cn(
-//       'relative flex w-px items-center justify-center bg-border after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:-translate-y-1/2 data-[panel-group-direction=vertical]:after:translate-x-0 [&[data-panel-group-direction=vertical]>div]:rotate-90',
-//       className
-//     )}
-//     {...props}
-//   >
-//     {withHandle && (
-//       <div className="z-10 flex h-4 w-3 items-center justify-center rounded-sm border bg-border">
-//         <GripVertical className="h-2.5 w-2.5" />
-//       </div>
-//     )}
-//   </ResizablePrimitive.PanelResizeHandle>
-// );
-// export { ResizablePanelGroup, ResizablePanel, ResizableHandle };
-
-   // MenubarPrimitive-----------------------------------------
-
-  
- 
-// const MenubarMenu = MenubarPrimitive.Menu;
-
-// const MenubarGroup = MenubarPrimitive.Group;
-
-// const MenubarPortal = MenubarPrimitive.Portal;
-
-// const MenubarSub = MenubarPrimitive.Sub;
-
 // const MenubarRadioGroup = MenubarPrimitive.RadioGroup;
 
 const Menubar = React.forwardRef<
@@ -5601,17 +5207,7 @@ const MenubarShortcut = ({
   );
 };
 MenubarShortcut.displayname = 'MenubarShortcut';
-  // NavigationMenu-----------------------------------------
-
  
- 
- 
-// const Sheet = SheetPrimitive.Root;
-
-// const SheetTrigger = SheetPrimitive.Trigger;
-
-// const SheetClose = SheetPrimitive.Close;
-
 const SheetPortal = SheetPrimitive.Portal;
 
 const SheetOverlay = React.forwardRef<
@@ -6113,9 +5709,7 @@ function CreateGoalModal({ onClose }: CreateGoalModalProps) {
 }
 // home--------------======================
 
- 
-
-  function Home() {
+   function Home() {
   const { selectedGoal } = useGoals();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
