@@ -14,13 +14,13 @@ import { Inter } from 'next/font/google'; // Replace with actual fontsimport "./
 const inter = Inter({ subsets: ['latin'] });
 
 import { clsx, type ClassValue } from 'clsx';
-import * as AccordionPrimitive from '@radix-ui/react-accordion';
+// import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { ChevronDown,ChevronUp } from 'lucide-react';
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
-import * as AspectRatioPrimitive from '@radix-ui/react-aspect-ratio';
+// import * as AspectRatioPrimitive from '@radix-ui/react-aspect-ratio';
 import { MoreHorizontal } from 'lucide-react';
-import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
-import { type DialogProps } from '@radix-ui/react-dialog';
+// import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
+// import { type DialogProps } from '@radix-ui/react-dialog';
 import { Command as CommandPrimitive } from 'cmdk';
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
 import { OTPInput, OTPInputContext } from 'input-otp';
@@ -31,19 +31,19 @@ import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu';
  import * as ProgressPrimitive from '@radix-ui/react-progress';
  import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
  import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
-  import { GripVertical } from 'lucide-react';
-  import * as ResizablePrimitive from 'react-resizable-panels';
+  // import { GripVertical } from 'lucide-react';
+  // import * as ResizablePrimitive from 'react-resizable-panels';
 import { twMerge } from 'tailwind-merge';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Drawer as DrawerPrimitive } from 'vaul';
-import {
-  Controller,
-  ControllerProps,
-  FieldPath,
-  FieldValues,
-  FormProvider,
-  useFormContext,
-} from 'react-hook-form';
+// import {
+//   Controller,
+//   ControllerProps,
+//   FieldPath,
+//   FieldValues,
+//   FormProvider,
+//   useFormContext,
+// } from 'react-hook-form';
 import * as LabelPrimitive from '@radix-ui/react-label';
 import {   Circle } from 'lucide-react';
 import useEmblaCarousel, {
@@ -551,7 +551,7 @@ const GoalContext = createContext<GoalContextProps | undefined>(undefined);
  
 
  
-const ToastProvider = ToastPrimitives.Provider;
+// const ToastProvider = ToastPrimitives.Provider;
 
 const ToastViewport = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Viewport>,
@@ -704,12 +704,12 @@ interface State {
   toasts: ToasterToast[];
 }
 
-let count = 0;
+// let count = 0;
 
-function genId() {
-  count = (count + 1) % Number.MAX_SAFE_INTEGER;
-  return count.toString();
-}
+// function genId() {
+//   count = (count + 1) % Number.MAX_SAFE_INTEGER;
+//   return count.toString();
+// }
 
 const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>();
 
@@ -790,58 +790,58 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, 'id'>;
 
-function toast({ ...props }: Toast) {
-  const id = genId();
+// function toast({ ...props }: Toast) {
+//   const id = genId();
 
-  const update = (props: ToasterToast) =>
-    dispatch({
-      type: actionTypes.UPDATE_TOAST,
-      toast: { ...props, id },
-    });
+//   const update = (props: ToasterToast) =>
+//     dispatch({
+//       type: actionTypes.UPDATE_TOAST,
+//       toast: { ...props, id },
+//     });
   
-  const dismiss = () => dispatch({ type: actionTypes.DISMISS_TOAST, toastId: id });
+//   const dismiss = () => dispatch({ type: actionTypes.DISMISS_TOAST, toastId: id });
 
-  dispatch({
-    type: actionTypes.ADD_TOAST,
-    toast: {
-      ...props,
-      id,
-      open: true,
-      onOpenChange: (open: boolean) => {
-        if (!open) dismiss();
-      },
-    },
-  });
+//   dispatch({
+//     type: actionTypes.ADD_TOAST,
+//     toast: {
+//       ...props,
+//       id,
+//       open: true,
+//       onOpenChange: (open: boolean) => {
+//         if (!open) dismiss();
+//       },
+//     },
+//   });
 
-  return {
-    id: id,
-    dismiss,
-    update,
-  };
-}
+//   return {
+//     id: id,
+//     dismiss,
+//     update,
+//   };
+// }
 
-function useToast() {
-  const [state, setState] = React.useState<State>(memoryState);
+// function useToast() {
+//   const [state, setState] = React.useState<State>(memoryState);
 
-  React.useEffect(() => {
-    listeners.push(setState);
-    return () => {
-      const index = listeners.indexOf(setState);
-      if (index > -1) {
-        listeners.splice(index, 1);
-      }
-    };
-  }, []); // Removed state from dependencies to prevent infinite loops
+//   React.useEffect(() => {
+//     listeners.push(setState);
+//     return () => {
+//       const index = listeners.indexOf(setState);
+//       if (index > -1) {
+//         listeners.splice(index, 1);
+//       }
+//     };
+//   }, []); // Removed state from dependencies to prevent infinite loops
 
-  return {
-    ...state,
-    toast,
-    dismiss: (toastId?: string) => dispatch({ 
-      type: actionTypes.DISMISS_TOAST, 
-      toastId 
-    }),
-  };
-}
+//   return {
+//     ...state,
+//     toast,
+//     dismiss: (toastId?: string) => dispatch({ 
+//       type: actionTypes.DISMISS_TOAST, 
+//       toastId 
+//     }),
+//   };
+// }
 // goalCard==================================
 
 interface GoalCardProps {
@@ -2488,29 +2488,29 @@ interface DashboardProps {
 }
 // toaster==============================================
 
- export function Toaster() {
-  const { toasts } = useToast();
+//  export function Toaster() {
+//   const { toasts } = useToast();
 
-  return (
-    <ToastProvider>
-      {toasts.map(function ({ id, title, description, action, ...props }) {
-        return (
-          <Toast key={id} {...props}>
-            <div className="grid gap-1">
-              {title && <ToastTitle>{title}</ToastTitle>}
-              {description && (
-                <ToastDescription>{description}</ToastDescription>
-              )}
-            </div>
-            {action}
-            <ToastClose />
-          </Toast>
-        );
-      })}
-      <ToastViewport />
-    </ToastProvider>
-  );
-}
+//   return (
+//     <ToastProvider>
+//       {toasts.map(function ({ id, title, description, action, ...props }) {
+//         return (
+//           <Toast key={id} {...props}>
+//             <div className="grid gap-1">
+//               {title && <ToastTitle>{title}</ToastTitle>}
+//               {description && (
+//                 <ToastDescription>{description}</ToastDescription>
+//               )}
+//             </div>
+//             {action}
+//             <ToastClose />
+//           </Toast>
+//         );
+//       })}
+//       <ToastViewport />
+//     </ToastProvider>
+//   );
+// }
 
 // alert------------------------------
  
@@ -3964,90 +3964,90 @@ const CardFooter = React.forwardRef<
 ));
 CardFooter.displayName = 'CardFooter';
 // badgeVariants------------------
-const badgeVariants = cva(
-  'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
-  {
-    variants: {
-      variant: {
-        default:
-          'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
-        secondary:
-          'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        destructive:
-          'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
-        outline: 'text-foreground',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-    },
-  }
-);
+// const badgeVariants = cva(
+//   'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+//   {
+//     variants: {
+//       variant: {
+//         default:
+//           'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
+//         secondary:
+//           'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
+//         destructive:
+//           'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
+//         outline: 'text-foreground',
+//       },
+//     },
+//     defaultVariants: {
+//       variant: 'default',
+//     },
+//   }
+// );
 
-  export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
+//   export interface BadgeProps
+//   extends React.HTMLAttributes<HTMLDivElement>,
+//     VariantProps<typeof badgeVariants> {}
 
-function Badge({ className, variant, ...props }: BadgeProps) {
-  return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
-  );
-}
-export { Badge, badgeVariants };
+// function Badge({ className, variant, ...props }: BadgeProps) {
+//   return (
+//     <div className={cn(badgeVariants({ variant }), className)} {...props} />
+//   );
+// }
+// export { Badge, badgeVariants };
 
-// // accordion-------------------
+// // // accordion-------------------
  
 
  
-const Accordion = AccordionPrimitive.Root;
+// const Accordion = AccordionPrimitive.Root;
 
-const AccordionItem = React.forwardRef<
-  React.ElementRef<typeof AccordionPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
->(({ className, ...props }, ref) => (
-  <AccordionPrimitive.Item
-    ref={ref}
-    className={cn('border-b', className)}
-    {...props}
-  />
-));
-AccordionItem.displayName = 'AccordionItem';
+// const AccordionItem = React.forwardRef<
+//   React.ElementRef<typeof AccordionPrimitive.Item>,
+//   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
+// >(({ className, ...props }, ref) => (
+//   <AccordionPrimitive.Item
+//     ref={ref}
+//     className={cn('border-b', className)}
+//     {...props}
+//   />
+// ));
+// AccordionItem.displayName = 'AccordionItem';
 
-const AccordionTrigger = React.forwardRef<
-  React.ElementRef<typeof AccordionPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
-  <AccordionPrimitive.Header className="flex">
-    <AccordionPrimitive.Trigger
-      ref={ref}
-      className={cn(
-        'flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180',
-        className
-      )}
-      {...props}
-    >
-      {children}
-      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
-    </AccordionPrimitive.Trigger>
-  </AccordionPrimitive.Header>
-));
-AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
+// const AccordionTrigger = React.forwardRef<
+//   React.ElementRef<typeof AccordionPrimitive.Trigger>,
+//   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
+// >(({ className, children, ...props }, ref) => (
+//   <AccordionPrimitive.Header className="flex">
+//     <AccordionPrimitive.Trigger
+//       ref={ref}
+//       className={cn(
+//         'flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180',
+//         className
+//       )}
+//       {...props}
+//     >
+//       {children}
+//       <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
+//     </AccordionPrimitive.Trigger>
+//   </AccordionPrimitive.Header>
+// ));
+// AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
 
-const AccordionContent = React.forwardRef<
-  React.ElementRef<typeof AccordionPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <AccordionPrimitive.Content
-    ref={ref}
-    className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
-    {...props}
-  >
-    <div className={cn('pb-4 pt-0', className)}>{children}</div>
-  </AccordionPrimitive.Content>
-));
+// const AccordionContent = React.forwardRef<
+//   React.ElementRef<typeof AccordionPrimitive.Content>,
+//   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
+// >(({ className, children, ...props }, ref) => (
+//   <AccordionPrimitive.Content
+//     ref={ref}
+//     className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+//     {...props}
+//   >
+//     <div className={cn('pb-4 pt-0', className)}>{children}</div>
+//   </AccordionPrimitive.Content>
+// ));
 
-AccordionContent.displayName = AccordionPrimitive.Content.displayName;
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };
+// AccordionContent.displayName = AccordionPrimitive.Content.displayName;
+// export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };
 
 // avatarrrr-------------------
   
@@ -4094,8 +4094,8 @@ const AvatarFallback = React.forwardRef<
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 // AspectRatio
 
- const AspectRatio = AspectRatioPrimitive.Root;
- export { AspectRatio };
+//  const AspectRatio = AspectRatioPrimitive.Root;
+//  export { AspectRatio };
 
   // Breadcrumb=========================
  
@@ -4201,12 +4201,12 @@ BreadcrumbEllipsis.displayName = 'BreadcrumbElipssis';
   // CollapsibleContent-----------------------------------------
 
  
-const Collapsible = CollapsiblePrimitive.Root;
+// const Collapsible = CollapsiblePrimitive.Root;
 
-const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger;
+// const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger;
 
-const CollapsibleContent = CollapsiblePrimitive.CollapsibleContent;
-export { Collapsible, CollapsibleTrigger, CollapsibleContent };
+// const CollapsibleContent = CollapsiblePrimitive.CollapsibleContent;
+// export { Collapsible, CollapsibleTrigger, CollapsibleContent };
 
   //  Progress-----------------------------------
 
@@ -4499,17 +4499,17 @@ const Command = React.forwardRef<
 ));
 Command.displayName = CommandPrimitive.displayName;
 
-   const CommandDialog = ({ children, ...props }: DialogProps) => {
-  return (
-    <DialogPrimitive.Root {...props}>
-      <DialogContent className="overflow-hidden p-0 shadow-lg">
-        <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
-          {children}
-        </Command>
-      </DialogContent>
-    </DialogPrimitive.Root>
-  );
-};
+//    const CommandDialog = ({ children, ...props }: DialogProps) => {
+//   return (
+//     <DialogPrimitive.Root {...props}>
+//       <DialogContent className="overflow-hidden p-0 shadow-lg">
+//         <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
+//           {children}
+//         </Command>
+//       </DialogContent>
+//     </DialogPrimitive.Root>
+//   );
+// };
 
 const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
@@ -4615,17 +4615,17 @@ const CommandShortcut = ({
   );
 };
 CommandShortcut.displayName = 'CommandShortcut';
-export {
-  Command,
-  CommandDialog,
-  CommandInput,
-  CommandList,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-  CommandShortcut,
-  CommandSeparator,
-};
+// export {
+//   Command,
+//   CommandDialog,
+//   CommandInput,
+//   CommandList,
+//   CommandEmpty,
+//   CommandGroup,
+//   CommandItem,
+//   CommandShortcut,
+//   CommandSeparator,
+// };
 
   // DropdownMenu-----------------------------------------
 
@@ -5064,167 +5064,167 @@ Label.displayName = LabelPrimitive.Root.displayName;
 
   
  
-const Form = FormProvider;
+// const Form = FormProvider;
 
-type FormFieldContextValue<
-  TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
-> = {
-  name: TName;
-};
+// type FormFieldContextValue<
+//   TFieldValues extends FieldValues = FieldValues,
+//   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+// > = {
+//   name: TName;
+// };
 
-const FormFieldContext = React.createContext<FormFieldContextValue>(
-  {} as FormFieldContextValue
-);
+// const FormFieldContext = React.createContext<FormFieldContextValue>(
+//   {} as FormFieldContextValue
+// );
 
- const FormField = <
-  TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
->({
-  ...props
-}: ControllerProps<TFieldValues, TName>) => {
-  return (
-    <FormFieldContext.Provider value={{ name: props.name }}>
-      <Controller {...props} />
-    </FormFieldContext.Provider>
-  );
-};
+//  const FormField = <
+//   TFieldValues extends FieldValues = FieldValues,
+//   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+// >({
+//   ...props
+// }: ControllerProps<TFieldValues, TName>) => {
+//   return (
+//     <FormFieldContext.Provider value={{ name: props.name }}>
+//       <Controller {...props} />
+//     </FormFieldContext.Provider>
+//   );
+// };
 
-const useFormField = () => {
-  const fieldContext = React.useContext(FormFieldContext);
-  const itemContext = React.useContext(FormItemContext);
-  const { getFieldState, formState } = useFormContext();
+// const useFormField = () => {
+//   const fieldContext = React.useContext(FormFieldContext);
+//   const itemContext = React.useContext(FormItemContext);
+//   const { getFieldState, formState } = useFormContext();
 
-  const fieldState = getFieldState(fieldContext.name, formState);
+//   const fieldState = getFieldState(fieldContext.name, formState);
 
-  if (!fieldContext) {
-    throw new Error('useFormField should be used within <FormField>');
-  }
+//   if (!fieldContext) {
+//     throw new Error('useFormField should be used within <FormField>');
+//   }
 
-  const { id } = itemContext;
+//   const { id } = itemContext;
 
-  return {
-    id,
-    name: fieldContext.name,
-    formItemId: `${id}-form-item`,
-    formDescriptionId: `${id}-form-item-description`,
-    formMessageId: `${id}-form-item-message`,
-    ...fieldState,
-  };
-};
+//   return {
+//     id,
+//     name: fieldContext.name,
+//     formItemId: `${id}-form-item`,
+//     formDescriptionId: `${id}-form-item-description`,
+//     formMessageId: `${id}-form-item-message`,
+//     ...fieldState,
+//   };
+// };
 
-type FormItemContextValue = {
-  id: string;
-};
+// type FormItemContextValue = {
+//   id: string;
+// };
 
-const FormItemContext = React.createContext<FormItemContextValue>(
-  {} as FormItemContextValue
-);
+// const FormItemContext = React.createContext<FormItemContextValue>(
+//   {} as FormItemContextValue
+// );
 
-const FormItem = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
-  const id = React.useId();
+// const FormItem = React.forwardRef<
+//   HTMLDivElement,
+//   React.HTMLAttributes<HTMLDivElement>
+// >(({ className, ...props }, ref) => {
+//   const id = React.useId();
 
-  return (
-    <FormItemContext.Provider value={{ id }}>
-      <div ref={ref} className={cn('space-y-2', className)} {...props} />
-    </FormItemContext.Provider>
-  );
-});
-FormItem.displayName = 'FormItem';
+//   return (
+//     <FormItemContext.Provider value={{ id }}>
+//       <div ref={ref} className={cn('space-y-2', className)} {...props} />
+//     </FormItemContext.Provider>
+//   );
+// });
+// FormItem.displayName = 'FormItem';
 
-const FormLabel = React.forwardRef<
-  React.ElementRef<typeof LabelPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
->(({ className, ...props }, ref) => {
-  const { error, formItemId } = useFormField();
+// const FormLabel = React.forwardRef<
+//   React.ElementRef<typeof LabelPrimitive.Root>,
+//   React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
+// >(({ className, ...props }, ref) => {
+//   const { error, formItemId } = useFormField();
 
-  return (
-    <Label
-      ref={ref}
-      className={cn(error && 'text-destructive', className)}
-      htmlFor={formItemId}
-      {...props}
-    />
-  );
-});
-FormLabel.displayName = 'FormLabel';
+//   return (
+//     <Label
+//       ref={ref}
+//       className={cn(error && 'text-destructive', className)}
+//       htmlFor={formItemId}
+//       {...props}
+//     />
+//   );
+// });
+// FormLabel.displayName = 'FormLabel';
 
-const FormControl = React.forwardRef<
-  React.ElementRef<typeof Slot>,
-  React.ComponentPropsWithoutRef<typeof Slot>
->(({ ...props }, ref) => {
-  const { error, formItemId, formDescriptionId, formMessageId } =
-    useFormField();
+// const FormControl = React.forwardRef<
+//   React.ElementRef<typeof Slot>,
+//   React.ComponentPropsWithoutRef<typeof Slot>
+// >(({ ...props }, ref) => {
+//   const { error, formItemId, formDescriptionId, formMessageId } =
+//     useFormField();
 
-  return (
-    <Slot
-      ref={ref}
-      id={formItemId}
-      aria-describedby={
-        !error
-          ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
-      }
-      aria-invalid={!!error}
-      {...props}
-    />
-  );
-});
-FormControl.displayName = 'FormControl';
+//   return (
+//     <Slot
+//       ref={ref}
+//       id={formItemId}
+//       aria-describedby={
+//         !error
+//           ? `${formDescriptionId}`
+//           : `${formDescriptionId} ${formMessageId}`
+//       }
+//       aria-invalid={!!error}
+//       {...props}
+//     />
+//   );
+// });
+// FormControl.displayName = 'FormControl';
 
-const FormDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => {
-  const { formDescriptionId } = useFormField();
+// const FormDescription = React.forwardRef<
+//   HTMLParagraphElement,
+//   React.HTMLAttributes<HTMLParagraphElement>
+// >(({ className, ...props }, ref) => {
+//   const { formDescriptionId } = useFormField();
 
-  return (
-    <p
-      ref={ref}
-      id={formDescriptionId}
-      className={cn('text-sm text-muted-foreground', className)}
-      {...props}
-    />
-  );
-});
-FormDescription.displayName = 'FormDescription';
+//   return (
+//     <p
+//       ref={ref}
+//       id={formDescriptionId}
+//       className={cn('text-sm text-muted-foreground', className)}
+//       {...props}
+//     />
+//   );
+// });
+// FormDescription.displayName = 'FormDescription';
 
-const FormMessage = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, children, ...props }, ref) => {
-  const { error, formMessageId } = useFormField();
-  const body = error ? String(error?.message) : children;
+// const FormMessage = React.forwardRef<
+//   HTMLParagraphElement,
+//   React.HTMLAttributes<HTMLParagraphElement>
+// >(({ className, children, ...props }, ref) => {
+//   const { error, formMessageId } = useFormField();
+//   const body = error ? String(error?.message) : children;
 
-  if (!body) {
-    return null;
-  }
+//   if (!body) {
+//     return null;
+//   }
 
-  return (
-    <p
-      ref={ref}
-      id={formMessageId}
-      className={cn('text-sm font-medium text-destructive', className)}
-      {...props}
-    >
-      {body}
-    </p>
-  );
-});
-FormMessage.displayName = 'FormMessage';
-export {
-  useFormField,
-  Form,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-  FormField,
-};
+//   return (
+//     <p
+//       ref={ref}
+//       id={formMessageId}
+//       className={cn('text-sm font-medium text-destructive', className)}
+//       {...props}
+//     >
+//       {body}
+//     </p>
+//   );
+// });
+// FormMessage.displayName = 'FormMessage';
+// export {
+//   useFormField,
+//   Form,
+//   FormItem,
+//   FormLabel,
+//   FormControl,
+//   FormDescription,
+//   FormMessage,
+//   FormField,
+// };
   // HoverCardPrimitive-----------------------------------------
 
  
@@ -5342,43 +5342,43 @@ Input.displayName = 'Input';
 
 
  
-const ResizablePanelGroup = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof ResizablePrimitive.PanelGroup>) => (
-  <ResizablePrimitive.PanelGroup
-    className={cn(
-      'flex h-full w-full data-[panel-group-direction=vertical]:flex-col',
-      className
-    )}
-    {...props}
-  />
-);
+// const ResizablePanelGroup = ({
+//   className,
+//   ...props
+// }: React.ComponentProps<typeof ResizablePrimitive.PanelGroup>) => (
+//   <ResizablePrimitive.PanelGroup
+//     className={cn(
+//       'flex h-full w-full data-[panel-group-direction=vertical]:flex-col',
+//       className
+//     )}
+//     {...props}
+//   />
+// );
 
-const ResizablePanel = ResizablePrimitive.Panel;
+// const ResizablePanel = ResizablePrimitive.Panel;
 
-const ResizableHandle = ({
-  withHandle,
-  className,
-  ...props
-}: React.ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> & {
-  withHandle?: boolean;
-}) => (
-  <ResizablePrimitive.PanelResizeHandle
-    className={cn(
-      'relative flex w-px items-center justify-center bg-border after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:-translate-y-1/2 data-[panel-group-direction=vertical]:after:translate-x-0 [&[data-panel-group-direction=vertical]>div]:rotate-90',
-      className
-    )}
-    {...props}
-  >
-    {withHandle && (
-      <div className="z-10 flex h-4 w-3 items-center justify-center rounded-sm border bg-border">
-        <GripVertical className="h-2.5 w-2.5" />
-      </div>
-    )}
-  </ResizablePrimitive.PanelResizeHandle>
-);
-export { ResizablePanelGroup, ResizablePanel, ResizableHandle };
+// const ResizableHandle = ({
+//   withHandle,
+//   className,
+//   ...props
+// }: React.ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> & {
+//   withHandle?: boolean;
+// }) => (
+//   <ResizablePrimitive.PanelResizeHandle
+//     className={cn(
+//       'relative flex w-px items-center justify-center bg-border after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:-translate-y-1/2 data-[panel-group-direction=vertical]:after:translate-x-0 [&[data-panel-group-direction=vertical]>div]:rotate-90',
+//       className
+//     )}
+//     {...props}
+//   >
+//     {withHandle && (
+//       <div className="z-10 flex h-4 w-3 items-center justify-center rounded-sm border bg-border">
+//         <GripVertical className="h-2.5 w-2.5" />
+//       </div>
+//     )}
+//   </ResizablePrimitive.PanelResizeHandle>
+// );
+// export { ResizablePanelGroup, ResizablePanel, ResizableHandle };
 
    // MenubarPrimitive-----------------------------------------
 
