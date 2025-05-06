@@ -10,7 +10,8 @@ import * as SliderPrimitive from '@radix-ui/react-slider';
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import { ThemeProvider } from 'next-themes';
 import { Inter } from 'next/font/google'; // Replace with actual fontsimport "./globals.css";
- 
+import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+
 const inter = Inter({ subsets: ['latin'] });
 
 import { clsx, type ClassValue } from 'clsx';
@@ -72,7 +73,7 @@ import { FiClock } from 'react-icons/fi';
 import {   FiTrash2, FiCheck,   } from 'react-icons/fi';
 import { Slot } from '@radix-ui/react-slot';
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
- import {  formatDistanceToNow } from 'date-fns';
+//  import {  formatDistanceToNow } from 'date-fns';
  import { FiMessageCircle, FiCheckCircle,  } from 'react-icons/fi';
 import {  AnimatePresence } from 'framer-motion';
 import { FiCode, FiCloud, FiLayout } from 'react-icons/fi';
@@ -1766,6 +1767,9 @@ interface EmptyStateProps {
     show: { opacity: 1, y: 0 }
   };
 
+    function formatDistanceToNow(date: Date, options: { addSuffix: boolean }): React.ReactNode {
+      return formatDistanceToNow(date, options);
+    }
   return (
     <motion.ul 
       className="space-y-3 max-h-[350px] overflow-y-auto pr-1 -mr-1"
@@ -4858,7 +4862,7 @@ ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName;
   // DropdownMenu-----------------------------------------
 
 
- import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+// import { formatDistanceToNow } from 'date-fns/formatDistanceToNow'; // Uncomment if needed
 
 // const DropdownMenu = DropdownMenuPrimitive.Root;
 
