@@ -73,7 +73,7 @@ import { FiClock } from 'react-icons/fi';
 import {   FiTrash2, FiCheck,   } from 'react-icons/fi';
 import { Slot } from '@radix-ui/react-slot';
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
-//  import {  formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow'; // Uncomment if needed
  import { FiMessageCircle, FiCheckCircle,  } from 'react-icons/fi';
 import {  AnimatePresence } from 'framer-motion';
 import { FiCode, FiCloud, FiLayout } from 'react-icons/fi';
@@ -1767,9 +1767,13 @@ interface EmptyStateProps {
     show: { opacity: 1, y: 0 }
   };
 
-    function formatDistanceToNow(date: Date, options: { addSuffix: boolean }): React.ReactNode {
-      return formatDistanceToNow(date, options);
-    }
+  <div className="text-[10px] text-gray-500 dark:text-gray-400 whitespace-nowrap ml-2">
+  {activityItems.map((activity) => (
+    <div key={activity.id}>
+      {formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true })}
+    </div>
+  ))}
+</div>
   return (
     <motion.ul 
       className="space-y-3 max-h-[350px] overflow-y-auto pr-1 -mr-1"
@@ -2930,8 +2934,8 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: () => <ChevronLeft className="h-4 w-4" />,
-        IconRight: () => <ChevronRight className="h-4 w-4" />,
+        // IconLeft: () => <ChevronLeft className="h-4 w-4" />,
+        // IconRight: () => <ChevronRight className="h-4 w-4" />,
       }}
       {...props}
     />
