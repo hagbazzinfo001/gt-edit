@@ -1,95 +1,86 @@
-// the following are all the dependencies installed
-// 1. rechart, framer-motion, clsx, tailwind-merge, date-fns, next-themes, react-icons, next-themes, @radix-ui/react-accordion, lucide-react
-
-// 2. @custom-variant dark (&:where(.dark, .dark *)); to the global css
 'use client';
 import * as React from 'react';
-import { ReactNode } from 'react';
-import { Drawer as DrawerPrimitive } from 'vaul';
-import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
-import * as MenubarPrimitive from '@radix-ui/react-menubar';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import * as ToastPrimitives from '@radix-ui/react-toast';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { X } from 'lucide-react';
+import * as SelectPrimitive from '@radix-ui/react-select';
 import * as SheetPrimitive from '@radix-ui/react-dialog';
 import * as SliderPrimitive from '@radix-ui/react-slider';
-import { Toaster as Sonner } from 'sonner';
-import * as AccordionPrimitive from '@radix-ui/react-accordion';
-import { ChevronDown } from 'lucide-react';
-import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
-import { cva, type VariantProps } from 'class-variance-authority';
-import * as AvatarPrimitive from '@radix-ui/react-avatar';
-import { Slot } from '@radix-ui/react-slot';
-import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { X } from 'lucide-react';
-import { ChevronRight, Circle, MoreHorizontal, ChevronLeft } from 'lucide-react'
-  import { DayPicker } from 'react-day-picker';
-  type CalendarProps = React.ComponentProps<typeof DayPicker>;
-import * as AspectRatioPrimitive from '@radix-ui/react-aspect-ratio';
-import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
- import { OTPInput, OTPInputContext } from 'input-otp';
-import { Dot } from 'lucide-react';
-import * as PopoverPrimitive from '@radix-ui/react-popover';
-import * as ProgressPrimitive from '@radix-ui/react-progress';
-import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
-import * as TabsPrimitive from '@radix-ui/react-tabs';
-import * as ToastPrimitives from '@radix-ui/react-toast';
-import * as TogglePrimitive from '@radix-ui/react-toggle';
- import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
-  import * as TooltipPrimitive from '@radix-ui/react-tooltip';
+import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
+import { ThemeProvider } from 'next-themes';
+import { Inter } from 'next/font/google'; // Replace with actual fontsimport "./globals.css";
+ 
+const inter = Inter({ subsets: ['latin'] });
 
- import * as SelectPrimitive from '@radix-ui/react-select';
-import {  ChevronUp } from 'lucide-react';
-import { GripVertical } from 'lucide-react';
-import * as ResizablePrimitive from 'react-resizable-panels';
+import { clsx, type ClassValue } from 'clsx';
+import * as AccordionPrimitive from '@radix-ui/react-accordion';
+import { ChevronDown,ChevronUp } from 'lucide-react';
+import * as AvatarPrimitive from '@radix-ui/react-avatar';
+import * as AspectRatioPrimitive from '@radix-ui/react-aspect-ratio';
+import { MoreHorizontal } from 'lucide-react';
+import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
 import { type DialogProps } from '@radix-ui/react-dialog';
 import { Command as CommandPrimitive } from 'cmdk';
-import * as ContextMenuPrimitive from '@radix-ui/react-context-menu';
-import * as LabelPrimitive from '@radix-ui/react-label';
-import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
-import * as SeparatorPrimitive from '@radix-ui/react-separator';
-import * as SwitchPrimitives from '@radix-ui/react-switch';
- 
- import {
+import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
+import { OTPInput, OTPInputContext } from 'input-otp';
+import { Dot } from 'lucide-react';
+import { Search } from 'lucide-react';
+import * as MenubarPrimitive from '@radix-ui/react-menubar';
+import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu';
+ import * as ProgressPrimitive from '@radix-ui/react-progress';
+ import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
+ import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
+  import { GripVertical } from 'lucide-react';
+  import * as ResizablePrimitive from 'react-resizable-panels';
+import { twMerge } from 'tailwind-merge';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
+import { Drawer as DrawerPrimitive } from 'vaul';
+import {
   Controller,
   ControllerProps,
   FieldPath,
   FieldValues,
-  FormProvider,
+   
   useFormContext,
 } from 'react-hook-form';
-
-import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu';
-
-import { Search } from 'lucide-react';
+import * as LabelPrimitive from '@radix-ui/react-label';
+import {   Circle } from 'lucide-react';
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from 'embla-carousel-react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import * as RechartsPrimitive from 'recharts';
+import * as TabsPrimitive from '@radix-ui/react-tabs';
+import * as SwitchPrimitives from '@radix-ui/react-switch';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import { Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { DayPicker } from 'react-day-picker';
+import { motion } from 'framer-motion';
+import { format, isPast, isToday } from 'date-fns';
+  import { FiCalendar, FiUsers, FiUser,   FiFlag } from 'react-icons/fi';
+   import { FiTarget, FiMenu, FiX, FiSun, FiMoon, FiPlus } from 'react-icons/fi';
+   import Link from 'next/link';
+  import { usePathname } from 'next/navigation';
+  import { useTheme } from 'next-themes';
+  import {  FiGithub, FiLinkedin, FiMail } from 'react-icons/fi';
+  import { FiFilter, } from 'react-icons/fi';
+  import { useMemo } from 'react';
+  import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
+import { FiClock } from 'react-icons/fi';
+import {   FiTrash2, FiCheck,   } from 'react-icons/fi';
+import { Slot } from '@radix-ui/react-slot';
+import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
+ import {  formatDistanceToNow } from 'date-fns';
+ import { FiMessageCircle, FiCheckCircle,  } from 'react-icons/fi';
+import {  AnimatePresence } from 'framer-motion';
+import { FiCode, FiCloud, FiLayout } from 'react-icons/fi';
  import Image from 'next/image';
-import { useMemo } from 'react';
-   import { clsx, type ClassValue } from 'clsx';
- import { twMerge } from 'tailwind-merge';
-  import { motion, AnimatePresence } from 'framer-motion';
- import { useTheme } from 'next-themes';
- import { FiTarget, FiGithub, FiTwitter, FiMail,FiFilter, FiMenu, FiX, FiTrash2, FiCheck, FiSun, FiMoon, FiMessageCircle, FiPlus, FiCalendar, FiUsers, FiUser,   FiFlag} from 'react-icons/fi';
-  import Link from 'next/link';
- import { usePathname } from 'next/navigation';
-//  import './globals.css';
-// import type { Metadata } from 'next';
-// import { Inter } from 'next/font/google';
-//  import { ThemeProvider } from 'next-themes';
-import { createContext, useContext, useState, useEffect, } from 'react';
-  import { format, isPast, isToday } from 'date-fns';
-   import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
-import {   FiCheckCircle, FiClock } from 'react-icons/fi';
-import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
-
- 
-//  ts-interface/alias
-interface EmptyStateProps {
-  onCreateGoal: () => void;
+ function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
 }
+// interface------------------------------------
   interface User {
   id: string;
   name: string;
@@ -97,13 +88,6 @@ interface EmptyStateProps {
   avatar: string;
 }
 
-interface NavbarProps {
-  onCreateGoal: () => void;
-}
-interface GoalCardProps {
-  goal: Goal;
-  view: 'grid' | 'list';
-}
   interface Comment {
   id: string;
   goalId: string;
@@ -112,9 +96,7 @@ interface GoalCardProps {
   content: string;
   createdAt: string;
 }
-interface CreateGoalModalProps {
-  onClose: () => void;
-}
+
   interface Milestone {
   id: string;
   goalId: string;
@@ -153,36 +135,15 @@ interface CreateGoalModalProps {
   members: User[];
   avatar: string;
 }
-interface GoalContextProps {
-  goals: Goal[];
-  filteredGoals: Goal[];
-  selectedGoal: Goal | null;
-  addGoal: (goal: Omit<Goal, 'id' | 'createdAt' | 'isCompleted' | 'progress' | 'milestones' | 'comments'>) => void;
-  updateGoal: (goalId: string, updates: Partial<Goal>) => void;
-  deleteGoal: (goalId: string) => void;
-  addComment: (goalId: string, content: string) => void;
-  addMilestone: (goalId: string, milestone: Omit<Milestone, 'id' | 'goalId'>) => void;
-  toggleMilestone: (goalId: string, milestoneId: string) => void;
-  setSelectedGoal: (goal: Goal | null) => void;
-  updateProgress: (goalId: string, progress: number) => void;
-  filterGoals: (category?: GoalCategory | 'all', completed?: boolean, priority?: GoalPriority | 'all') => void;
-  activeFilters: {
-    category: GoalCategory | 'all';
-    completed: boolean | 'all';
-    priority: GoalPriority | 'all';
-  };
-}
-
-interface DashboardProps {
-  onCreateGoal: () => void;
-}
-//  MockData-------------------------------------------------
+// mockdata============================
+ 
+// Mock Users
   const mockUsers: User[] = [
   {
     id: '1',
     name: 'Agbabiaka O.',
     email: 'Agbabiakahammed003@gmail.com',
-    avatar: 'https://randomuser.me/api/portraits/women/1.jpg',
+    avatar: 'https://i.postimg.cc/yxwg4krP/IMG-0667-removebg.pngzq```',
   },
   {
     id: '2',
@@ -203,15 +164,7 @@ interface DashboardProps {
     avatar: 'https://randomuser.me/api/portraits/men/4.jpg',
   },
 ];
-interface BadgeProps
-extends React.HTMLAttributes<HTMLDivElement>,
-  VariantProps<typeof badgeVariants> {}
 
-  export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
-}
 // Mock Teams
   const mockTeams: Team[] = [
   {
@@ -229,16 +182,6 @@ extends React.HTMLAttributes<HTMLDivElement>,
     avatar: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80',
   },
 ];
-
-// type ToastProps = React.ComponentProps<typeof ToastPrimitives.Root> & {
-//   title?: React.ReactNode;
-//   description?: React.ReactNode;
-//   action?: ToastActionElement;
-// };
-
-
-
-
 
 // Helper function to generate comments
 const generateComments = (goalId: string, count: number): Comment[] => {
@@ -330,8 +273,29 @@ const generateMilestones = (goalId: string, count: number): Milestone[] => {
 
 // Mock current user
   const currentUser: User = mockUsers[0];
-// Context section-----------------------------------------------------------------------
+// GoalContext======================
 
+
+ 
+interface GoalContextProps {
+  goals: Goal[];
+  filteredGoals: Goal[];
+  selectedGoal: Goal | null;
+  addGoal: (goal: Omit<Goal, 'id' | 'createdAt' | 'isCompleted' | 'progress' | 'milestones' | 'comments'>) => void;
+  updateGoal: (goalId: string, updates: Partial<Goal>) => void;
+  deleteGoal: (goalId: string) => void;
+  addComment: (goalId: string, content: string) => void;
+  addMilestone: (goalId: string, milestone: Omit<Milestone, 'id' | 'goalId'>) => void;
+  toggleMilestone: (goalId: string, milestoneId: string) => void;
+  setSelectedGoal: (goal: Goal | null) => void;
+  updateProgress: (goalId: string, progress: number) => void;
+  filterGoals: (category?: GoalCategory | 'all', completed?: boolean, priority?: GoalPriority | 'all') => void;
+  activeFilters: {
+    category: GoalCategory | 'all';
+    completed: boolean | 'all';
+    priority: GoalPriority | 'all';
+  };
+}
 
 const GoalContext = createContext<GoalContextProps | undefined>(undefined);
 
@@ -579,8 +543,124 @@ const GoalContext = createContext<GoalContextProps | undefined>(undefined);
   }
   return context;
 }
+// usetoast-------------------------------------import * as React from 'react';
+// Update the import path to the correct location or ensure the module exists
+// Update the import path to the correct location or create the missing file
+ 
+ 
+ 
 
-// hook section-----------------------------------------------------
+ 
+const ToastProvider = ToastPrimitives.Provider;
+
+const ToastViewport = React.forwardRef<
+  React.ElementRef<typeof ToastPrimitives.Viewport>,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Viewport>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitives.Viewport
+    ref={ref}
+    className={cn(
+      'fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]',
+      className
+    )}
+    {...props}
+  />
+));
+ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
+
+const toastVariants = cva(
+  'group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full',
+  {
+    variants: {
+      variant: {
+        default: 'border bg-background text-foreground',
+        destructive:
+          'destructive group border-destructive bg-destructive text-destructive-foreground',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  }
+);
+
+const Toast = React.forwardRef<
+  React.ElementRef<typeof ToastPrimitives.Root>,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
+    VariantProps<typeof toastVariants>
+>(({ className, variant, ...props }, ref) => {
+  return (
+    <ToastPrimitives.Root
+      ref={ref}
+      className={cn(toastVariants({ variant }), className)}
+      {...props}
+    />
+  );
+});
+Toast.displayName = ToastPrimitives.Root.displayName;
+
+const ToastAction = React.forwardRef<
+  React.ElementRef<typeof ToastPrimitives.Action>,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Action>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitives.Action
+    ref={ref}
+    className={cn(
+      'inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-muted/40 group-[.destructive]:hover:border-destructive/30 group-[.destructive]:hover:bg-destructive group-[.destructive]:hover:text-destructive-foreground group-[.destructive]:focus:ring-destructive',
+      className
+    )}
+    {...props}
+  />
+));
+ToastAction.displayName = ToastPrimitives.Action.displayName;
+
+const ToastClose = React.forwardRef<
+  React.ElementRef<typeof ToastPrimitives.Close>,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Close>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitives.Close
+    ref={ref}
+    className={cn(
+      'absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600',
+      className
+    )}
+    toast-close=""
+    {...props}
+  >
+    <X className="h-4 w-4" />
+  </ToastPrimitives.Close>
+));
+ToastClose.displayName = ToastPrimitives.Close.displayName;
+
+const ToastTitle = React.forwardRef<
+  React.ElementRef<typeof ToastPrimitives.Title>,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitives.Title
+    ref={ref}
+    className={cn('text-sm font-semibold', className)}
+    {...props}
+  />
+));
+ToastTitle.displayName = ToastPrimitives.Title.displayName;
+
+const ToastDescription = React.forwardRef<
+  React.ElementRef<typeof ToastPrimitives.Description>,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Description>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitives.Description
+    ref={ref}
+    className={cn('text-sm opacity-90', className)}
+    {...props}
+  />
+));
+ToastDescription.displayName = ToastPrimitives.Description.displayName;
+
+type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>;
+
+type ToastActionElement = React.ReactElement<typeof ToastAction>;
+
+ 
 
 const TOAST_LIMIT = 1;
 const TOAST_REMOVE_DELAY = 1000000;
@@ -601,6 +681,7 @@ const actionTypes = {
 } as const;
 
 // type ActionType = keyof typeof actionTypes; // Derive type from the object
+
 type Action =
   | {
       type: typeof actionTypes.ADD_TOAST;
@@ -750,7 +831,8 @@ function useToast() {
         listeners.splice(index, 1);
       }
     };
-  }, []);  
+  }, []); // Removed state from dependencies to prevent infinite loops
+
   return {
     ...state,
     toast,
@@ -760,171 +842,14 @@ function useToast() {
     }),
   };
 }
+// goalCard==================================
 
-// lib section------------------------------------------------------------------
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+interface GoalCardProps {
+  goal: Goal;
+  view: 'grid' | 'list';
 }
-  
-// Nav-component
 
-    function Navbar({ onCreateGoal }: NavbarProps) {
-  const { theme, setTheme } = useTheme();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const pathname = usePathname();
-  const isActive = (path: string) => pathname === path;
-
-
-  return (
-    <nav className="bg-white dark:bg-slate-800 shadow-sm sticky top-0 z-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <motion.div 
-              className="flex-shrink-0 flex items-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <FiTarget className="h-8 w-8 text-blue-500" />
-              <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">GoalTrack</span>
-            </motion.div>
-            
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              <Link
-                href="/"
-                className={`${
-                  isActive('/') 
-                    ? 'border-blue-500 text-gray-900 dark:text-white'
-                    : 'border-transparent text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white hover:border-gray-300'
-                } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/team"
-                className={`${
-                  isActive('/team')
-                    ? 'border-blue-500 text-gray-900 dark:text-white'
-                    : 'border-transparent text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white hover:border-gray-300'
-                } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
-              >
-                Teams
-              </Link>
-               
-            </div>
-          </div>
-          
-          <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={onCreateGoal}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center text-sm font-medium transition-colors duration-200"
-            >
-              <FiPlus className="mr-2" />
-              New Goal
-            </motion.button>
-            
-            <button
-              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-              className="p-2 rounded-full text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 focus:outline-none"
-            >
-              {theme === 'dark' ? <FiSun className="h-5 w-5" /> : <FiMoon className="h-5 w-5" />}
-            </button>
-            
-            <div className="relative">
-              <div className="flex items-center">
-                <Image
-                  className="h-8 w-8 rounded-full border-2 border-gray-200 dark:border-slate-600"
-                  // src={currentUser.avatar}
-                  src="https://i.postimg.cc/yxwg4krP/IMG-0667-removebg.png"                  alt={currentUser.name}
-                  width={32} // Specify the width
-  height={32} // Specify the height
-                />
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex items-center sm:hidden">
-            <button
-              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-              className="p-2 rounded-full text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 focus:outline-none mr-2"
-            >
-              {theme === 'dark' ? <FiSun className="h-5 w-5" /> : <FiMoon className="h-5 w-5" />}
-            </button>
-            
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 focus:outline-none"
-            >
-              {isMenuOpen ? (
-                <FiX className="block h-6 w-6" aria-hidden="true" />
-              ) : (
-                <FiMenu className="block h-6 w-6" aria-hidden="true" />
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile menu */}
-      {isMenuOpen && (
-        <motion.div 
-          className="sm:hidden"
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          <div className="pt-2 pb-3 space-y-1">
-            <Link
-              href="/"
-              className={`${
-                isActive('/')
-                  ? 'bg-blue-50 dark:bg-slate-700 border-l-4 border-blue-500 text-blue-700 dark:text-white'
-                  : 'border-transparent text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:border-gray-300 dark:hover:border-gray-500'
-              } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/team"
-              className={`${
-                isActive('/team')
-                  ? 'bg-blue-50 dark:bg-slate-700 border-l-4 border-blue-500 text-blue-700 dark:text-white'
-                  : 'border-transparent text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:border-gray-300 dark:hover:border-gray-500'
-              } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
-            >
-              Teams
-            </Link>
- 
-          </div>
-          <div className="pt-4 pb-3 border-t border-gray-200 dark:border-slate-700">
-            <div className="flex items-center px-4">
-              <div className="flex-shrink-0">
-                <Image
-                  className="h-10 w-10 rounded-full"
-                  // src={currentUser.avatar}
-                  src="https://i.postimg.cc/yxwg4krP/IMG-0667-removebg.png"
-                  alt={currentUser.name}
-                  width={40} // Specify the width
-  height={40} // Specify the height
-                />
-              </div>
-              <div className="ml-3">
-                <div className="text-base font-medium text-gray-800 dark:text-white">{currentUser.name}</div>
-                <div className="text-sm font-medium text-gray-500 dark:text-gray-300">{currentUser.email}</div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      )}
-    </nav>
-  );
-}
-// GoalCard-component---------------------------------------------------------------
-    function GoalCard({ goal, view }: GoalCardProps) {
+ function GoalCard({ goal, view }: GoalCardProps) {
   const { setSelectedGoal } = useGoals();
   
   // Calculate progress percentage
@@ -970,7 +895,7 @@ function cn(...inputs: ClassValue[]) {
       variants={item}
       whileHover={{ y: -4 }}
       onClick={() => setSelectedGoal(goal)}
-      className={`bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer ${
+      className={`bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer   ${
         isPastDue ? 'ring-2 ring-red-500 dark:ring-red-400' : ''
       } ${view === 'list' ? 'p-4' : 'p-5'}`}
     >
@@ -1058,7 +983,7 @@ function cn(...inputs: ClassValue[]) {
                 )}
               </div>
             )}
-            
+                
             {goal.comments.length > 0 && (
               <div className="ml-2 flex items-center space-x-1 text-sm text-gray-500 dark:text-gray-400">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1073,12 +998,352 @@ function cn(...inputs: ClassValue[]) {
     </motion.div>
   );
 }
-// footer-component---------------------------------------------------------------
- function Footer() {
+// teammodal============================================
+
+interface TeamsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const skills = [
+  {
+    category: 'Frontend Development',
+    icon: <FiLayout />,
+    items: ['React', 'Next.js', 'TailwindCSS', 'HTML5', 'CSS3', 'JavaScript/TypeScript']
+  },
+  {
+    category: 'Cloud Engineering',
+    icon: <FiCloud />,
+    items: ['AWS', 'Docker', 'CI/CD', 'Serverless', 'Microservices']
+  },
+  {
+    category: 'Tools & Technologies',
+    icon: <FiCode />,
+    items: ['Git', 'GitHub Actions', 'REST APIs', 'GraphQL', 'Node.js']
+  }
+];
+
+const aboutText = `A software developer skilled in designing, developing, and implementing innovative software solutions. Proficient in programming languages, software architecture, and debugging, with a strong focus on creating user-friendly applications. Experienced in collaborating with cross-functional teams, meeting project deadlines, and continuously enhancing technical skills to stay updated with industry trends. Passionate about problem-solving and leveraging technology to drive efficiency and deliver high-quality solutions.`;
+
+  function TeamsModal({ isOpen, onClose }: TeamsModalProps) {
+  const [displayedText, setDisplayedText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (currentIndex < aboutText.length) {
+      const timeout = setTimeout(() => {
+        setDisplayedText(prev => prev + aboutText[currentIndex]);
+        setCurrentIndex(prev => prev + 1);
+      }, 20);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [currentIndex]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setDisplayedText('');
+      setCurrentIndex(0);
+    }
+  }, [isOpen]);
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 mt-20 pt-50 overflow-y-auto pt-40"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 500 }}
+            className="bg-white dark:bg-slate-800 rounded-lg max-w-4xl w-full shadow-xl overflow-hidden"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex justify-end p-4">
+              <button
+                onClick={onClose}
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                <FiX className="h-6 w-6" />
+              </button>
+            </div>
+
+            <div className="max-w-4xl mx-auto px-4 pb-8">
+              <div className=" overflow-hidden rounded-lg pt-80 justify-center flex items-center" >
+                <Image
+                  src="https://i.postimg.cc/yxwg4krP/IMG-0667-removebg.png"
+                  alt="Profile"
+                  className="  object-contain center rounded-lg"
+                  width={500}
+                  height={500}
+                />
+              </div>
+
+              <div className="p-8 bg-white dark:bg-slate-800 rounded-lg shadow-xl mb-8">
+                <motion.h1
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-3xl font-bold text-gray-900 dark:text-white mb-4 text-center"
+                >
+                  About Me
+                </motion.h1>
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-center">
+                  {displayedText}
+                  <motion.span
+                    initial={{ opacity: 1 }}
+                    animate={{ opacity: 0 }}
+                    transition={{ repeat: Infinity, duration: 0.8 }}
+                    className="inline-block w-0.5 h-4 bg-blue-500 ml-1"
+                  >
+                    |
+                  </motion.span>
+                </p>
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="bg-white dark:bg-slate-800 rounded-lg shadow-xl p-8"
+              >
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
+                  Skills & Expertise
+                </h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {skills.map((skillGroup, index) => (
+                    <motion.div
+                      key={skillGroup.category}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.7 + index * 0.2 }}
+                      className="space-y-4"
+                    >
+                      <div className="flex items-center space-x-2 text-blue-500 dark:text-blue-400">
+                        <span className="text-xl">{skillGroup.icon}</span>
+                        <h3 className="font-semibold">{skillGroup.category}</h3>
+                      </div>
+
+                      <ul className="space-y-2">
+                        {skillGroup.items.map((skill, skillIndex) => (
+                          <motion.li
+                            key={skill}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.9 + index * 0.1 + skillIndex * 0.1 }}
+                            className="flex items-center space-x-2 text-gray-600 dark:text-gray-300"
+                          >
+                            <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                            <span>{skill}</span>
+                          </motion.li>
+                        ))}
+                      </ul>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+// navbar===================================
+
+
+interface NavbarProps {
+  onCreateGoal: () => void;
+}
+  function Navbar({ onCreateGoal }: NavbarProps) {
+  const { theme, setTheme } = useTheme();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isTeamsModalOpen, setIsTeamsModalOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isActive = (path: string) => pathname === path;
+
+  return (
+    <>
+      <nav className="bg-white dark:bg-slate-800 shadow-sm sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center">
+              <motion.div 
+                className="flex-shrink-0 flex items-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Link href="/" className="flex items-center">
+                  <FiTarget className="h-8 w-8 text-blue-500" />
+                  <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">GoalTrack</span>
+                </Link>
+              </motion.div>
+              
+              <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                <Link
+                  href="/"
+                  className={`${
+                    isActive('/') 
+                      ? 'border-blue-500 text-gray-900 dark:text-white'
+                      : 'border-transparent text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white hover:border-gray-300'
+                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={() => setIsTeamsModalOpen(true)}
+                  className={`${
+                    isActive('/teams')
+                      ? 'border-blue-500 text-gray-900 dark:text-white'
+                      : 'border-transparent text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white hover:border-gray-300'
+                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                >
+                  Teams
+                </button>
+                
+              </div>
+            </div>
+            
+            <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={onCreateGoal}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center text-sm font-medium transition-colors duration-200"
+              >
+                <FiPlus className="mr-2" />
+                New Goal
+              </motion.button>
+              
+              <button
+                onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+                className="p-2 rounded-full text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 focus:outline-none"
+              >
+                {theme === 'dark' ? <FiSun className="h-5 w-5" /> : <FiMoon className="h-5 w-5" />}
+              </button>
+              
+              <div className="relative">
+                <div className="flex items-center">
+                  <Image
+                    className="h-10 w-10 rounded-full border-2 border-gray-200 dark:border-slate-600"
+                    src="https://i.postimg.cc/yxwg4krP/IMG-0667-removebg.png"
+                    alt={currentUser.name}
+                    width={32}
+                    height={32}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex items-center sm:hidden">
+              <button
+                onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+                className="p-2 rounded-full text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 focus:outline-none mr-2"
+              >
+                {theme === 'dark' ? <FiSun className="h-5 w-5" /> : <FiMoon className="h-5 w-5" />}
+              </button>
+              
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 focus:outline-none"
+              >
+                {isMenuOpen ? (
+                  <FiX className="block h-6 w-6" aria-hidden="true" />
+                ) : (
+                  <FiMenu className="block h-6 w-6" aria-hidden="true" />
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile menu */}
+        {isMenuOpen && (
+          <motion.div 
+            className="sm:hidden"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="pt-2 pb-3 space-y-1">
+              <Link
+                href="/"
+                className={`${
+                  isActive('/')
+                    ? 'bg-blue-50 dark:bg-slate-700 border-l-4 border-blue-500 text-blue-700 dark:text-white'
+                    : 'border-transparent text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:border-gray-300 dark:hover:border-gray-500'
+                } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
+              >
+                Dashboard
+              </Link>
+              <button
+                onClick={() => {
+                  setIsTeamsModalOpen(true);
+                  setIsMenuOpen(false);
+                }}
+                className={`${
+                  isActive('/teams')
+                    ? 'bg-blue-50 dark:bg-slate-700 border-l-4 border-blue-500 text-blue-700 dark:text-white'
+                    : 'border-transparent text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:border-gray-300 dark:hover:border-gray-500'
+                } block pl-3 pr-4 py-2 border-l-4 text-base font-medium w-full text-left`}
+              >
+                Teams
+              </button>
+              
+               <div className="pt-4 pb-2">
+                <button
+                  onClick={onCreateGoal}
+                  className="w-full flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                >
+                  <FiPlus className="mr-2" />
+                  New Goal
+                </button>
+              </div>
+            </div>
+            <div className="pt-4 pb-3 border-t border-gray-200 dark:border-slate-700">
+              <div className="flex items-center px-4">
+                <div className="flex-shrink-0">
+                  <Image
+                    className="h-10 w-10 rounded-full"
+                    src="https://i.postimg.cc/yxwg4krP/IMG-0667-removebg.png"
+                    alt={currentUser.name}
+                    width={40}
+                    height={40}
+                  />
+                </div>
+                <div className="ml-3">
+                  <div className="text-base font-medium text-gray-800 dark:text-white">{currentUser.name}</div>
+                  <div className="text-sm font-medium text-gray-500 dark:text-gray-300">{currentUser.email}</div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </nav>
+
+      <TeamsModal isOpen={isTeamsModalOpen} onClose={() => setIsTeamsModalOpen(false)} />
+    </>
+  );
+}
+
+// footer----==========================='use client';
+
+
+    function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 mt-auto">
+    <footer className="bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 mt-auto"  suppressHydrationWarning>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand and description */}
@@ -1091,7 +1356,7 @@ function cn(...inputs: ClassValue[]) {
             >
               <FiTarget className="h-6 w-6 text-blue-500" />
               <span className="ml-2 text-lg font-bold text-gray-900 dark:text-white">GoalTrack</span>
-            </motion.div>
+            </motion.div  >
             
             <p className="mt-3 text-sm text-gray-500 dark:text-gray-400 max-w-md">
               Set, track, and achieve your personal and team goals with powerful visualization tools.
@@ -1100,16 +1365,16 @@ function cn(...inputs: ClassValue[]) {
             
             <div className="mt-4 flex space-x-4">
               <motion.a 
-                href="#" 
+                href="https://www.linkedin.com/in/owolabi-agbabiaka/" 
                 className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
                 whileHover={{ scale: 1.1 }}
               >
                 <span className="sr-only">Twitter</span>
-                <FiTwitter className="h-5 w-5" />
+                <FiLinkedin className="h-5 w-5" />
               </motion.a>
               
               <motion.a 
-                href="#" 
+                href="https://github.com/hagbazzinfo001/Goal-tracker.git" 
                 className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
                 whileHover={{ scale: 1.1 }}
               >
@@ -1118,7 +1383,7 @@ function cn(...inputs: ClassValue[]) {
               </motion.a>
               
               <motion.a 
-                href="#" 
+                href="mailto:agbabiakahammed003@gmail.com" 
                 className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
                 whileHover={{ scale: 1.1 }}
               >
@@ -1134,23 +1399,23 @@ function cn(...inputs: ClassValue[]) {
               Product
             </h3>
             <ul className="mt-4 space-y-3">
-              <motion.li whileHover={{ x: 2 }}>
-                <a href="#" className="text-sm text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400">
+              <motion.li whileHover={{ x: 2 }} suppressHydrationWarning>
+                <a href='' className="text-sm text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400" suppressHydrationWarning>
                   Features
                 </a>
               </motion.li>
               <motion.li whileHover={{ x: 2 }}>
-                <a href="#" className="text-sm text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400">
+                <a href='' className="text-sm text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400" suppressHydrationWarning>
                   Pricing
                 </a>
               </motion.li>
               <motion.li whileHover={{ x: 2 }}>
-                <a href="#" className="text-sm text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400">
+                <a href='' className="text-sm text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400" suppressHydrationWarning>
                   Teams
-                </a>
+                </a   >
               </motion.li>
               <motion.li whileHover={{ x: 2 }}>
-                <a href="#" className="text-sm text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400">
+                < a href='' className="text-sm text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400">
                   Feedback
                 </a>
               </motion.li>
@@ -1163,22 +1428,22 @@ function cn(...inputs: ClassValue[]) {
             </h3>
             <ul className="mt-4 space-y-3">
               <motion.li whileHover={{ x: 2 }}>
-                <a href="#" className="text-sm text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400">
+                <a href=''  className="text-sm text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400">
                   Help Center
                 </a>
               </motion.li>
               <motion.li whileHover={{ x: 2 }}>
-                <a href="#" className="text-sm text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400">
+                <a href='' className="text-sm text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400">
                   Privacy
-                </a>
+                </a >
               </motion.li>
               <motion.li whileHover={{ x: 2 }}>
-                <a href="#" className="text-sm text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400">
+                <a href='' className="text-sm text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400">
                   Terms
                 </a>
               </motion.li>
               <motion.li whileHover={{ x: 2 }}>
-                <a href="#" className="text-sm text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400">
+                <a href="mailto:agbabiakahammed003@gmail.com" className="text-sm text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400">
                   Contact Us
                 </a>
               </motion.li>
@@ -1194,8 +1459,8 @@ function cn(...inputs: ClassValue[]) {
       </div>
     </footer>
   );
-} 
-// filterBar-component---------------------------------------------------------------
+}
+// filter====================================
 
     function FilterBar() {
   const { filterGoals, activeFilters } = useGoals();
@@ -1341,10 +1606,13 @@ function cn(...inputs: ClassValue[]) {
     </div>
   );
 }
-// empty state---------------------------------------------------------------
+// emptystate-----------------------------------
+ 
+interface EmptyStateProps {
+  onCreateGoal: () => void;
+}
 
-
-  function EmptyState({ onCreateGoal }: EmptyStateProps) {
+ function EmptyState({ onCreateGoal }: EmptyStateProps) {
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -1374,8 +1642,227 @@ function cn(...inputs: ClassValue[]) {
     </motion.div>
   );
 }
-// Dashboard-component---------------------------------------------------------------
-    function Dashboard({ onCreateGoal }: DashboardProps) {
+
+// activity==============================
+
+  function ActivityFeed() {
+  const { goals } = useGoals();
+  
+  // Generate activity items from goals, comments, and milestones
+  const activityItems = useMemo(() => {
+    const items: {
+      id: string;
+      type: 'goal_created' | 'comment_added' | 'milestone_completed' | 'progress_updated';
+      goalId: string;
+      goalTitle: string;
+      timestamp: string;
+      userName?: string;
+      userAvatar?: string;
+      content?: string;
+      milestoneName?: string;
+      progressValue?: number;
+    }[] = [];
+    
+    // Add goal creation events
+    goals.forEach(goal => {
+      items.push({
+        id: `goal-${goal.id}`,
+        type: 'goal_created',
+        goalId: goal.id,
+        goalTitle: goal.title,
+        timestamp: goal.createdAt,
+      });
+      
+      // Add comments
+      interface Comment {
+        id: string;
+        createdAt: string;
+        user: {
+          name: string;
+          avatar?: string;
+        };
+        content: string;
+      }
+
+      goal.comments.forEach((comment: Comment) => {
+        items.push({
+          id: `comment-${comment.id}`,
+          type: 'comment_added',
+          goalId: goal.id,
+          goalTitle: goal.title,
+          timestamp: comment.createdAt,
+          userName: comment.user.name,
+          userAvatar: comment.user.avatar,
+          content: comment.content,
+        });
+      });
+      
+      // Add completed milestones
+      interface Milestone {
+        id: string;
+        title: string;
+        dueDate: string;
+        completed: boolean;
+      }
+
+      goal.milestones.filter((m: Milestone) => m.completed).forEach((milestone: Milestone) => {
+        items.push({
+          id: `milestone-${milestone.id}`,
+          type: 'milestone_completed',
+          goalId: goal.id,
+          goalTitle: goal.title,
+          timestamp: milestone.dueDate, // Using due date as completion timestamp
+          milestoneName: milestone.title,
+        });
+      });
+      
+      // Add progress updates (for goals with progress > 0)
+      if (goal.progress > 0 && goal.progress < goal.target) {
+        items.push({
+          id: `progress-${goal.id}`,
+          type: 'progress_updated',
+          goalId: goal.id,
+          goalTitle: goal.title,
+          timestamp: goal.createdAt, // Using creation date as a fallback
+          progressValue: goal.progress,
+        });
+      }
+    });
+    
+    // Sort by timestamp, most recent first
+    items.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    
+    // Take only the 5 most recent items
+    return items.slice(0, 5);
+  }, [goals]);
+
+  if (activityItems.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-full mb-3">
+          <FiTarget className="h-6 w-6 text-blue-500 dark:text-blue-400" />
+        </div>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">No activity yet</p>
+        <p className="text-xs text-gray-400 dark:text-gray-500">
+          Activity will appear here as you create goals, add comments, and complete milestones.
+        </p>
+      </div>
+    );
+  }
+
+  // Animation variants
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+  
+  const item = {
+    hidden: { opacity: 0, y: 10 },
+    show: { opacity: 1, y: 0 }
+  };
+
+  return (
+    <motion.ul 
+      className="space-y-3 max-h-[350px] overflow-y-auto pr-1 -mr-1"
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
+      {activityItems.map((activity) => (
+        <motion.li 
+          key={activity.id}
+          variants={item}
+          className="flex items-start space-x-3 pb-3 border-b border-gray-100 dark:border-slate-700 last:border-0 last:pb-0"
+        >
+          {/* Icon based on activity type */}
+          <div className={`flex-shrink-0 p-1.5 rounded-full mt-0.5 
+            ${activity.type === 'goal_created' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400' : ''}
+            ${activity.type === 'comment_added' ? 'bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400' : ''}
+            ${activity.type === 'milestone_completed' ? 'bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400' : ''}
+            ${activity.type === 'progress_updated' ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/50 dark:text-yellow-400' : ''}
+          `}>
+            {activity.type === 'goal_created' && <FiPlus className="h-3.5 w-3.5" />}
+            {activity.type === 'comment_added' && <FiMessageCircle className="h-3.5 w-3.5" />}
+            {activity.type === 'milestone_completed' && <FiCheckCircle className="h-3.5 w-3.5" />}
+            {activity.type === 'progress_updated' && <FiFlag className="h-3.5 w-3.5" />}
+          </div>
+          
+          <div className="flex-1 min-w-0">
+            <div className="flex items-baseline justify-between mb-1">
+              <div className="text-xs font-medium text-gray-900 dark:text-white truncate">
+                {activity.type === 'goal_created' && 'New goal created'}
+                {activity.type === 'comment_added' && (
+                  <span className="flex items-center">
+                    {activity.userAvatar ? (
+                    <Image 
+                      src={activity.userAvatar} 
+                      alt={activity.userName || 'User Avatar'} 
+                      className="w-4 h-4 rounded-full mr-1.5"
+                      width={32}
+                      height={32}
+                    />
+                  ) : (
+                    <div className="w-4 h-4 rounded-full bg-gray-300 mr-1.5" />
+                  )}
+                    {activity.userName}
+                  </span>
+                )}
+                {activity.type === 'milestone_completed' && 'Milestone completed'}
+                {activity.type === 'progress_updated' && 'Progress updated'}
+              </div>
+              
+              <div className="text-[10px] text-gray-500 dark:text-gray-400 whitespace-nowrap ml-2">
+                {formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true })}
+              </div>
+            </div>
+            
+            <p className="text-xs text-gray-700 dark:text-gray-300 mb-1 truncate">
+              {activity.type === 'goal_created' && (
+                <span>
+                  Goal &quot;<span className="font-medium">{activity.goalTitle}</span>&quot; was created
+                </span>
+              )}
+              {activity.type === 'comment_added' && (
+                <span>
+                  Commented on &quot;<span className="font-medium">{activity.goalTitle}</span>&quot;
+                </span>
+              )}
+              {activity.type === 'milestone_completed' && (
+                <span>
+                  Milestone &quot;<span className="font-medium">{activity.milestoneName}</span>&quot; for goal &quot;<span className="font-medium">{activity.goalTitle}</span>&quot;
+                </span>
+              )}
+              {activity.type === 'progress_updated' && (
+                <span>
+                  Progress on &quot;<span className="font-medium">{activity.goalTitle}</span>&quot; updated to {activity.progressValue}%
+                </span>
+              )}
+            </p>
+            
+            {activity.type === 'comment_added' && activity.content && (
+              <div className="text-xs italic text-gray-500 dark:text-gray-400 mt-1 pl-2 border-l-2 border-gray-200 dark:border-gray-700">
+                &quot;{activity.content.length > 60 ? `${activity.content.substring(0, 60)}...` : activity.content}&quot;
+              </div>
+            )}
+          </div>
+        </motion.li>
+      ))}
+    </motion.ul>
+  );
+}
+
+// dashboard==========================
+
+interface DashboardProps {
+  onCreateGoal: () => void;
+}
+
+ function Dashboard({ onCreateGoal }: DashboardProps) {
   const { filteredGoals, goals } = useGoals();
   const [activeView, setActiveView] = useState<'grid' | 'list'>('grid');
   
@@ -1554,481 +2041,10 @@ function cn(...inputs: ClassValue[]) {
     </div>
   );
 }
-// ActivityFeed-component---------------------------------------------------------------
- function ActivityFeed() {
-  const { goals } = useGoals();
-  
-  // Generate activity items from goals, comments, and milestones
-  const activityItems = useMemo(() => {
-    const items: {
-      id: string;
-      type: 'goal_created' | 'comment_added' | 'milestone_completed' | 'progress_updated';
-      goalId: string;
-      goalTitle: string;
-      timestamp: string;
-      userName?: string;
-      userAvatar?: string;
-      content?: string;
-      milestoneName?: string;
-      progressValue?: number;
-    }[] = [];
-    
-    // Add goal creation events
-    goals.forEach(goal => {
-      items.push({
-        id: `goal-${goal.id}`,
-        type: 'goal_created',
-        goalId: goal.id,
-        goalTitle: goal.title,
-        timestamp: goal.createdAt,
-      });
-      
-      // Add comments
-      interface Comment {
-        id: string;
-        createdAt: string;
-        user: {
-          name: string;
-          avatar?: string;
-        };
-        content: string;
-      }
-
-      goal.comments.forEach((comment: Comment) => {
-        items.push({
-          id: `comment-${comment.id}`,
-          type: 'comment_added',
-          goalId: goal.id,
-          goalTitle: goal.title,
-          timestamp: comment.createdAt,
-          userName: comment.user.name,
-          userAvatar: comment.user.avatar,
-          content: comment.content,
-        });
-      });
-      
-      // Add completed milestones
-      interface Milestone {
-        id: string;
-        title: string;
-        dueDate: string;
-        completed: boolean;
-      }
-
-      goal.milestones.filter((m: Milestone) => m.completed).forEach((milestone: Milestone) => {
-        items.push({
-          id: `milestone-${milestone.id}`,
-          type: 'milestone_completed',
-          goalId: goal.id,
-          goalTitle: goal.title,
-          timestamp: milestone.dueDate, // Using due date as completion timestamp
-          milestoneName: milestone.title,
-        });
-      });
-      
-      // Add progress updates (for goals with progress > 0)
-      if (goal.progress > 0 && goal.progress < goal.target) {
-        items.push({
-          id: `progress-${goal.id}`,
-          type: 'progress_updated',
-          goalId: goal.id,
-          goalTitle: goal.title,
-          timestamp: goal.createdAt, // Using creation date as a fallback
-          progressValue: goal.progress,
-        });
-      }
-    });
-    
-    // Sort by timestamp, most recent first
-    items.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-    
-    // Take only the 5 most recent items
-    return items.slice(0, 5);
-  }, [goals]);
-
-  if (activityItems.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
-        <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-full mb-3">
-          <FiTarget className="h-6 w-6 text-blue-500 dark:text-blue-400" />
-        </div>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">No activity yet</p>
-        <p className="text-xs text-gray-400 dark:text-gray-500">
-          Activity will appear here as you create goals, add comments, and complete milestones.
-        </p>
-      </div>
-    );
-  }
-
-  // Animation variants
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-  
-  const item = {
-    hidden: { opacity: 0, y: 10 },
-    show: { opacity: 1, y: 0 }
-  };
-
-  return (
-    <motion.ul 
-      className="space-y-3 max-h-[350px] overflow-y-auto pr-1 -mr-1"
-      variants={container}
-      initial="hidden"
-      animate="show"
-    >
-      {activityItems.map((activity) => (
-        <motion.li 
-          key={activity.id}
-          variants={item}
-          className="flex items-start space-x-3 pb-3 border-b border-gray-100 dark:border-slate-700 last:border-0 last:pb-0"
-        >
-          {/* Icon based on activity type */}
-          <div className={`flex-shrink-0 p-1.5 rounded-full mt-0.5 
-            ${activity.type === 'goal_created' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400' : ''}
-            ${activity.type === 'comment_added' ? 'bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400' : ''}
-            ${activity.type === 'milestone_completed' ? 'bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400' : ''}
-            ${activity.type === 'progress_updated' ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/50 dark:text-yellow-400' : ''}
-          `}>
-            {activity.type === 'goal_created' && <FiPlus className="h-3.5 w-3.5" />}
-            {activity.type === 'comment_added' && <FiMessageCircle className="h-3.5 w-3.5" />}
-            {activity.type === 'milestone_completed' && <FiCheckCircle className="h-3.5 w-3.5" />}
-            {activity.type === 'progress_updated' && <FiFlag className="h-3.5 w-3.5" />}
-          </div>
-          
-          <div className="flex-1 min-w-0">
-            <div className="flex items-baseline justify-between mb-1">
-              <div className="text-xs font-medium text-gray-900 dark:text-white truncate">
-                {activity.type === 'goal_created' && 'New goal created'}
-                {activity.type === 'comment_added' && (
-                  <span className="flex items-center">
-                    {activity.userAvatar ? (
-                    <Image 
-                      src={activity.userAvatar} 
-                      alt={activity.userName || 'User Avatar'} 
-                      className="w-4 h-4 rounded-full mr-1.5"
-                    />
-                  ) : (
-                    <div className="w-4 h-4 rounded-full bg-gray-300 mr-1.5" />
-                  )}
-                    {activity.userName}
-                  </span>
-                )}
-                {activity.type === 'milestone_completed' && 'Milestone completed'}
-                {activity.type === 'progress_updated' && 'Progress updated'}
-              </div>
-              
-              <div className="text-[10px] text-gray-500 dark:text-gray-400 whitespace-nowrap ml-2">
-                {formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true })}
-              </div>
-            </div>
-            
-            <p className="text-xs text-gray-700 dark:text-gray-300 mb-1 truncate">
-              {activity.type === 'goal_created' && (
-                <span>
-                  Goal &quot;<span className="font-medium">{activity.goalTitle}</span>&quot; was created
-                </span>
-              )}
-              {activity.type === 'comment_added' && (
-                <span>
-                  Commented on &quot;<span className="font-medium">{activity.goalTitle}</span>&quot;
-                </span>
-              )}
-              {activity.type === 'milestone_completed' && (
-                <span>
-                  Milestone &quot;<span className="font-medium">{activity.milestoneName}</span>&quot; for goal &quot;<span className="font-medium">{activity.goalTitle}</span>&quot;
-                </span>
-              )}
-              {activity.type === 'progress_updated' && (
-                <span>
-                  Progress on &quot;<span className="font-medium">{activity.goalTitle}</span>&quot; updated to {activity.progressValue}%
-                </span>
-              )}
-            </p>
-            
-            {activity.type === 'comment_added' && activity.content && (
-              <div className="text-xs italic text-gray-500 dark:text-gray-400 mt-1 pl-2 border-l-2 border-gray-200 dark:border-gray-700">
-                &quot;{activity.content.length > 60 ? `${activity.content.substring(0, 60)}...` : activity.content}&quot;
-              </div>
-            )}
-          </div>
-        </motion.li>
-      ))}
-    </motion.ul>
-  );
-}
-// CreateGoalModal-component---------------------------------------------------------------
-
-
-  function CreateGoalModal({ onClose }: CreateGoalModalProps) {
-  const { addGoal } = useGoals();
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState<GoalCategory>('personal');
-  const [dueDate, setDueDate] = useState('');
-  const [isTeamGoal, setIsTeamGoal] = useState(false);
-  const [priority, setPriority] = useState<GoalPriority>('medium');
-  const [target, setTarget] = useState(100);
-  const [unit, setUnit] = useState('%');
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Validate fields
-    const newErrors: Record<string, string> = {};
-    
-    if (!title.trim()) {
-      newErrors.title = 'Title is required';
-    }
-    
-    if (!dueDate) {
-      newErrors.dueDate = 'Due date is required';
-    } else if (new Date(dueDate) < new Date()) {
-      newErrors.dueDate = 'Due date cannot be in the past';
-    }
-    
-    if (target <= 0) {
-      newErrors.target = 'Target must be greater than 0';
-    }
-    
-    setErrors(newErrors);
-    
-    if (Object.keys(newErrors).length === 0) {
-      // Add new goal
-      const newGoal: Omit<Goal, 'id' | 'createdAt' | 'isCompleted' | 'progress' | 'milestones' | 'comments'> = {
-        title,
-        description,
-        category,
-        target,
-        unit,
-        dueDate: new Date(dueDate).toISOString(),
-        userId: currentUser.id,
-        isTeamGoal,
-        priority,
-        teamId: isTeamGoal ? '1' : undefined, // For simplicity, use the first team
-      };
-      
-      addGoal(newGoal);
-      onClose();
-    }
-  };
-
-  const overlay = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 }
-  };
-
-  const modal = {
-    hidden: { opacity: 0, y: 50, scale: 0.95 },
-    visible: { opacity: 1, y: 0, scale: 1 }
-  };
-
-  return (
-    <AnimatePresence>
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        exit="hidden"
-        variants={overlay}
-        className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
-        onClick={onClose}
-      >
-        <motion.div
-          variants={modal}
-          transition={{ type: 'spring', damping: 25, stiffness: 500 }}
-          className="bg-white dark:bg-slate-800 rounded-lg max-w-xl w-full shadow-xl overflow-hidden"
-          onClick={e => e.stopPropagation()}
-        >
-          <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-slate-700">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Create New Goal</h2>
-            <button
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
-            >
-              <FiX className="h-5 w-5" />
-            </button>
-          </div>
-          
-          <form onSubmit={handleSubmit} className="p-6">
-            <div className="space-y-5">
-              <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Goal Title*
-                </label>
-                <input
-                  id="title"
-                  type="text"
-                  value={title}
-                  onChange={e => setTitle(e.target.value)}
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white ${
-                    errors.title ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-slate-600'
-                  }`}
-                  placeholder="What do you want to achieve?"
-                />
-                {errors.title && (
-                  <p className="mt-1 text-sm text-red-500">{errors.title}</p>
-                )}
-              </div>
-              
-              <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  value={description}
-                  onChange={e => setDescription(e.target.value)}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
-                  placeholder="Describe your goal in detail"
-                />
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div>
-                  <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Category
-                  </label>
-                  <select
-                    id="category"
-                    value={category}
-                    onChange={e => setCategory(e.target.value as GoalCategory)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
-                  >
-                    <option value="personal">Personal</option>
-                    <option value="work">Work</option>
-                    <option value="health">Health</option>
-                    <option value="learning">Learning</option>
-                    <option value="finance">Finance</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Due Date*
-                  </label>
-                  <input
-                    id="dueDate"
-                    type="date"
-                    value={dueDate}
-                    onChange={e => setDueDate(e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white ${
-                      errors.dueDate ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-slate-600'
-                    }`}
-                  />
-                  {errors.dueDate && (
-                    <p className="mt-1 text-sm text-red-500">{errors.dueDate}</p>
-                  )}
-                </div>
-                
-                <div>
-                  <label htmlFor="priority" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Priority
-                  </label>
-                  <select
-                    id="priority"
-                    value={priority}
-                    onChange={e => setPriority(e.target.value as GoalPriority)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Goal Type
-                  </label>
-                  <div className="flex items-center space-x-4">
-                    <label className="inline-flex items-center">
-                      <input
-                        type="radio"
-                        className="form-radio text-blue-500 focus:ring-blue-500 h-4 w-4"
-                        checked={!isTeamGoal}
-                        onChange={() => setIsTeamGoal(false)}
-                      />
-                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Personal</span>
-                    </label>
-                    <label className="inline-flex items-center">
-                      <input
-                        type="radio"
-                        className="form-radio text-blue-500 focus:ring-blue-500 h-4 w-4"
-                        checked={isTeamGoal}
-                        onChange={() => setIsTeamGoal(true)}
-                      />
-                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Team</span>
-                    </label>
-                  </div>
-                </div>
-                
-                <div>
-                  <label htmlFor="target" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Target Value
-                  </label>
-                  <input
-                    id="target"
-                    type="number"
-                    value={target}
-                    onChange={e => setTarget(parseInt(e.target.value, 10))}
-                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white ${
-                      errors.target ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-slate-600'
-                    }`}
-                    min="1"
-                  />
-                  {errors.target && (
-                    <p className="mt-1 text-sm text-red-500">{errors.target}</p>
-                  )}
-                </div>
-                
-                <div>
-                  <label htmlFor="unit" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Unit
-                  </label>
-                  <input
-                    id="unit"
-                    type="text"
-                    value={unit}
-                    onChange={e => setUnit(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
-                    placeholder="%, miles, books, etc."
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <div className="mt-6 flex justify-end space-x-3">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-600"
-              >
-                Cancel
-              </button>
-              <motion.button
-                type="submit"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Create Goal
-              </motion.button>
-            </div>
-          </form>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
-  );
-}
-// GoalDetailsModal-component---------------------------------------------------------------
+// cREATGOAL mODAL========================
+;
+ 
+ 
   function GoalDetailsModal() {
   const { selectedGoal, setSelectedGoal, updateProgress, toggleMilestone, addComment, addMilestone,   deleteGoal } = useGoals();
   const [commentText, setCommentText] = useState('');
@@ -2113,13 +2129,13 @@ function cn(...inputs: ClassValue[]) {
         animate="visible"
         exit="hidden"
         variants={overlay}
-        className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 bg-black bg-opacity-50 z-50 mt-20  flex items-center justify-center p-3  lg:pt-50 pt-120 overflow-y-auto h-auto "
         onClick={() => setSelectedGoal(null)}
       >
         <motion.div
           variants={modal}
           transition={{ type: 'spring', damping: 25, stiffness: 500 }}
-          className="bg-white dark:bg-slate-800 rounded-lg max-w-3xl w-full shadow-xl overflow-hidden"
+          className="bg-white dark:bg-slate-800 rounded-lg max-w-3xl w-full shadow-xl overflow-auto"
           onClick={e => e.stopPropagation()}
         >
           <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-slate-700">
@@ -2399,6 +2415,8 @@ function cn(...inputs: ClassValue[]) {
                             src={comment.user.avatar}
                             alt={comment.user.name}
                             className="w-8 h-8 rounded-full"
+                            width={32}
+                            height={32}
                           />
                           
                           <div className="flex-1">
@@ -2428,6 +2446,8 @@ function cn(...inputs: ClassValue[]) {
                       src={selectedGoal.comments[0]?.user.avatar || 'https://randomuser.me/api/portraits/women/1.jpg'}
                       alt="Your avatar"
                       className="w-8 h-8 rounded-full"
+                      width={32}
+                      height={32}
                     />
                     
                     <div className="flex-1">
@@ -2466,63 +2486,250 @@ function cn(...inputs: ClassValue[]) {
     </AnimatePresence>
   );
 }
+// toaster==============================================
 
-// Accordion-ui---------------------------------------------------------------
+  function Toaster() {
+  const { toasts } = useToast();
 
-const Accordion = AccordionPrimitive.Root;
-const AccordionItem = React.forwardRef<
-  React.ElementRef<typeof AccordionPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
->(({ className, ...props }, ref) => (
-  <AccordionPrimitive.Item
+  return (
+    <ToastProvider>
+      {toasts.map(function ({ id, title, description, action, ...props }) {
+        return (
+          <Toast key={id} {...props}>
+            <div className="grid gap-1">
+              {title && <ToastTitle>{title}</ToastTitle>}
+              {description && (
+                <ToastDescription>{description}</ToastDescription>
+              )}
+            </div>
+            {action}
+            <ToastClose />
+          </Toast>
+        );
+      })}
+      <ToastViewport />
+    </ToastProvider>
+  );
+}
+
+// alert------------------------------
+ 
+ 
+const alertVariants = cva(
+  'relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground',
+  {
+    variants: {
+      variant: {
+        default: 'bg-background text-foreground',
+        destructive:
+          'border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  }
+);
+
+const Alert = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants>
+>(({ className, variant, ...props }, ref) => (
+  <div
     ref={ref}
-    className={cn('border-b', className)}
+    role="alert"
+    className={cn(alertVariants({ variant }), className)}
     {...props}
   />
 ));
-AccordionItem.displayName = 'AccordionItem';
+Alert.displayName = 'Alert';
 
-const AccordionTrigger = React.forwardRef<
-  React.ElementRef<typeof AccordionPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
-  <AccordionPrimitive.Header className="flex">
-    <AccordionPrimitive.Trigger
+const AlertTitle = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLHeadingElement>
+>(({ className, ...props }, ref) => (
+  <h5
+    ref={ref}
+    className={cn('mb-1 font-medium leading-none tracking-tight', className)}
+    {...props}
+  />
+));
+AlertTitle.displayName = 'AlertTitle';
+
+const AlertDescription = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn('text-sm [&_p]:leading-relaxed', className)}
+    {...props}
+  />
+));
+AlertDescription.displayName = 'AlertDescription';
+// button================================
+ 
+ 
+const buttonVariants = cva(
+  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  {
+    variants: {
+      variant: {
+        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        destructive:
+          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        outline:
+          'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+        secondary:
+          'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        link: 'text-primary underline-offset-4 hover:underline',
+      },
+      size: {
+        default: 'h-10 px-4 py-2',
+        sm: 'h-9 rounded-md px-3',
+        lg: 'h-11 rounded-md px-8',
+        icon: 'h-10 w-10',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
+    },
+  }
+);
+
+  interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : 'button';
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    );
+  }
+);
+Button.displayName = 'Button';
+// alert-dialog=========================
+ 
+
+  // Pagination-----------------------------------------
+ 
+
+  const Pagination = ({ className, ...props }: React.ComponentProps<'nav'>) => (
+    <nav
+      role="navigation"
+      aria-label="pagination"
+      className={cn('mx-auto flex w-full justify-center', className)}
+      {...props}
+    />
+  );
+  Pagination.displayName = 'Pagination';
+  
+  const PaginationContent = React.forwardRef<
+    HTMLUListElement,
+    React.ComponentProps<'ul'>
+  >(({ className, ...props }, ref) => (
+    <ul
       ref={ref}
+      className={cn('flex flex-row items-center gap-1', className)}
+      {...props}
+    />
+  ));
+  PaginationContent.displayName = 'PaginationContent';
+  
+  const PaginationItem = React.forwardRef<
+    HTMLLIElement,
+    React.ComponentProps<'li'>
+  >(({ className, ...props }, ref) => (
+    <li ref={ref} className={cn('', className)} {...props} />
+  ));
+  PaginationItem.displayName = 'PaginationItem';
+  
+  type PaginationLinkProps = {
+    isActive?: boolean;
+  } & Pick<ButtonProps, 'size'> &
+    React.ComponentProps<'a'>;
+  
+  const PaginationLink = ({
+    className,
+    isActive,
+    size = 'icon',
+    ...props
+  }: PaginationLinkProps) => (
+    <a
+      aria-current={isActive ? 'page' : undefined}
       className={cn(
-        'flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180',
+        buttonVariants({
+          variant: isActive ? 'outline' : 'ghost',
+          size,
+        }),
         className
       )}
       {...props}
+    />
+  );
+  PaginationLink.displayName = 'PaginationLink';
+  
+  const PaginationPrevious = ({
+    className,
+    ...props
+  }: React.ComponentProps<typeof PaginationLink>) => (
+    <PaginationLink
+      aria-label="Go to previous page"
+      size="default"
+      className={cn('gap-1 pl-2.5', className)}
+      {...props}
     >
-      {children}
-      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
-    </AccordionPrimitive.Trigger>
-  </AccordionPrimitive.Header>
-));
-AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
+      <ChevronLeft className="h-4 w-4" />
+      <span>Previous</span>
+    </PaginationLink>
+  );
+  PaginationPrevious.displayName = 'PaginationPrevious';
+  
+  const PaginationNext = ({
+    className,
+    ...props
+  }: React.ComponentProps<typeof PaginationLink>) => (
+    <PaginationLink
+      aria-label="Go to next page"
+      size="default"
+      className={cn('gap-1 pr-2.5', className)}
+      {...props}
+    >
+      <span>Next</span>
+      <ChevronRight className="h-4 w-4" />
+    </PaginationLink>
+  );
+  PaginationNext.displayName = 'PaginationNext';
+  
+  const PaginationEllipsis = ({
+    className,
+    ...props
+  }: React.ComponentProps<'span'>) => (
+    <span
+      aria-hidden
+      className={cn('flex h-9 w-9 items-center justify-center', className)}
+      {...props}
+    >
+      <MoreHorizontal className="h-4 w-4" />
+      <span className="sr-only">More pages</span>
+    </span>
+  );
+  PaginationEllipsis.displayName = 'PaginationEllipsis';
+  
+  
+// const AlertDialog = AlertDialogPrimitive.Root;
 
-const AccordionContent = React.forwardRef<
-  React.ElementRef<typeof AccordionPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <AccordionPrimitive.Content
-    ref={ref}
-    className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
-    {...props}
-  >
-    <div className={cn('pb-4 pt-0', className)}>{children}</div>
-  </AccordionPrimitive.Content>
-));
-
-AccordionContent.displayName = AccordionPrimitive.Content.displayName;
-// AlertDialog-ui---------------------------------------------------------------
-
-
-
-const AlertDialog = AlertDialogPrimitive.Root;
-
-const AlertDialogTrigger = AlertDialogPrimitive.Trigger;
+// const AlertDialogTrigger = AlertDialogPrimitive.Trigger;
 
 const AlertDialogPortal = AlertDialogPrimitive.Portal;
 
@@ -2639,294 +2846,41 @@ const AlertDialogCancel = React.forwardRef<
   />
 ));
 AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName;
+// calender===========================
 
-export {
-  AlertDialog,
-  AlertDialogPortal,
-  AlertDialogOverlay,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogAction,
-  AlertDialogCancel,
-};
-// Alert-ui---------------------------------------------------------------
-const alertVariants = cva(
-  'relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground',
-  {
-    variants: {
-      variant: {
-        default: 'bg-background text-foreground',
-        destructive:
-          'border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-    },
-  }
-);
-
-const Alert = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants>
->(({ className, variant, ...props }, ref) => (
-  <div
-    ref={ref}
-    role="alert"
-    className={cn(alertVariants({ variant }), className)}
-    {...props}
-  />
-));
-Alert.displayName = 'Alert';
-
-const AlertTitle = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-  <h5
-    ref={ref}
-    className={cn('mb-1 font-medium leading-none tracking-tight', className)}
-    {...props}
-  />
-));
-AlertTitle.displayName = 'AlertTitle';
-
-const AlertDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn('text-sm [&_p]:leading-relaxed', className)}
-    {...props}
-  />
-));
-AlertDescription.displayName = 'AlertDescription';
-const AspectRatio = AspectRatioPrimitive.Root; 
- // Avatar-ui---------------------------------------------------------------
-
- const Avatar = React.forwardRef<
-   React.ElementRef<typeof AvatarPrimitive.Root>,
-   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
- >(({ className, ...props }, ref) => (
-   <AvatarPrimitive.Root
-     ref={ref}
-     className={cn(
-       'relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full',
-       className
-     )}
-     {...props}
-   />
- ));
- Avatar.displayName = AvatarPrimitive.Root.displayName;
- 
- const AvatarImage = React.forwardRef<
-   React.ElementRef<typeof AvatarPrimitive.Image>,
-   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
- >(({ className, ...props }, ref) => (
-   <AvatarPrimitive.Image
-     ref={ref}
-     className={cn('aspect-square h-full w-full', className)}
-     {...props}
-   />
- ));
- AvatarImage.displayName = AvatarPrimitive.Image.displayName;
- 
- const AvatarFallback = React.forwardRef<
-   React.ElementRef<typeof AvatarPrimitive.Fallback>,
-   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
- >(({ className, ...props }, ref) => (
-   <AvatarPrimitive.Fallback
-     ref={ref}
-     className={cn(
-       'flex h-full w-full items-center justify-center rounded-full bg-muted',
-       className
-     )}
-     {...props}
-   />
- ));
- AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
- 
-// badge ui--------------------------------------------------------------- 
-// const badgeVariants = cva(
-//   'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
-//   {
-//     variants: {
-//       variant: {
-//         default:
-//           'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
-//         secondary:
-//           'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
-//         destructive:
-//           'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
-//         outline: 'text-foreground',
-//       },
-//     },
-//     defaultVariants: {
-//       variant: 'default',
-//     },
-//   }
-// );
- 
-// ;
+ import * as PopoverPrimitive from '@radix-ui/react-popover';
 
  
-const Breadcrumb = React.forwardRef<
-  HTMLElement,
-  React.ComponentPropsWithoutRef<'nav'> & {
-    separator?: React.ReactNode;
-  }
->(({ ...props }, ref) => <nav ref={ref} aria-label="breadcrumb" {...props} />);
-Breadcrumb.displayName = 'Breadcrumb';
+// const Popover = PopoverPrimitive.Root;
 
-const BreadcrumbList = React.forwardRef<
-  HTMLOListElement,
-  React.ComponentPropsWithoutRef<'ol'>
->(({ className, ...props }, ref) => (
-  <ol
-    ref={ref}
-    className={cn(
-      'flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5',
-      className
-    )}
-    {...props}
-  />
-));
-BreadcrumbList.displayName = 'BreadcrumbList';
+// const PopoverTrigger = PopoverPrimitive.Trigger;
 
-const BreadcrumbItem = React.forwardRef<
-  HTMLLIElement,
-  React.ComponentPropsWithoutRef<'li'>
->(({ className, ...props }, ref) => (
-  <li
-    ref={ref}
-    className={cn('inline-flex items-center gap-1.5', className)}
-    {...props}
-  />
-));
-BreadcrumbItem.displayName = 'BreadcrumbItem';
-
-const BreadcrumbLink = React.forwardRef<
-  HTMLAnchorElement,
-  React.ComponentPropsWithoutRef<'a'> & {
-    asChild?: boolean;
-  }
->(({ asChild, className, ...props }, ref) => {
-  const Comp = asChild ? Slot : 'a';
-
-  return (
-    <Comp
+const PopoverContent = React.forwardRef<
+  React.ElementRef<typeof PopoverPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
+>(({ className, align = 'center', sideOffset = 4, ...props }, ref) => (
+  <PopoverPrimitive.Portal>
+    <PopoverPrimitive.Content
       ref={ref}
-      className={cn('transition-colors hover:text-foreground', className)}
+      align={align}
+      sideOffset={sideOffset}
+      className={cn(
+        'z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+        className
+      )}
       {...props}
     />
-  );
-});
-BreadcrumbLink.displayName = 'BreadcrumbLink';
-
-const BreadcrumbPage = React.forwardRef<
-  HTMLSpanElement,
-  React.ComponentPropsWithoutRef<'span'>
->(({ className, ...props }, ref) => (
-  <span
-    ref={ref}
-    role="link"
-    aria-disabled="true"
-    aria-current="page"
-    className={cn('font-normal text-foreground', className)}
-    {...props}
-  />
+  </PopoverPrimitive.Portal>
 ));
-BreadcrumbPage.displayName = 'BreadcrumbPage';
+PopoverContent.displayName = PopoverPrimitive.Content.displayName;
 
-const BreadcrumbSeparator = ({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<'li'>) => (
-  <li
-    role="presentation"
-    aria-hidden="true"
-    className={cn('[&>svg]:size-3.5', className)}
-    {...props}
-  >
-    {children ?? <ChevronRight />}
-  </li>
-);
-BreadcrumbSeparator.displayName = 'BreadcrumbSeparator';
+ 
+// calender===========================
+ 
 
-const BreadcrumbEllipsis = ({
-  className,
-  ...props
-}: React.ComponentProps<'span'>) => (
-  <span
-    role="presentation"
-    aria-hidden="true"
-    className={cn('flex h-9 w-9 items-center justify-center', className)}
-    {...props}
-  >
-    <MoreHorizontal className="h-4 w-4" />
-    <span className="sr-only">More</span>
-  </span>
-);
-BreadcrumbEllipsis.displayName = 'BreadcrumbElipssis';
+  
+  type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
-
-// function Badge({ className, variant, ...props }: BadgeProps) {
-//   return (
-//     <div className={cn(badgeVariants({ variant }), className)} {...props} />
-//   );
-// }
-
-// const buttonVariants = cva(
-//   'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
-//   {
-//     variants: {
-//       variant: {
-//         default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-//         destructive:
-//           'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-//         outline:
-//           'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
-//         secondary:
-//           'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-//         ghost: 'hover:bg-accent hover:text-accent-foreground',
-//         link: 'text-primary underline-offset-4 hover:underline',
-//       },
-//       size: {
-//         default: 'h-10 px-4 py-2',
-//         sm: 'h-9 rounded-md px-3',
-//         lg: 'h-11 rounded-md px-8',
-//         icon: 'h-10 w-10',
-//       },
-//     },
-//     defaultVariants: {
-//       variant: 'default',
-//       size: 'default',
-//     },
-//   }
-// );
-// button ui--------------------------------------------------------------- 
-
-
-// const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-//   ({ className, variant, size, asChild = false, ...props }, ref) => {
-//     const Comp = asChild ? Slot : 'button';
-//     return (
-//       <Comp
-//         className={cn(buttonVariants({ variant, size, className }))}
-//         ref={ref}
-//         {...props}
-//       />
-//     );
-//   }
-// );
-// Button.displayName = 'Button';
-// Calendar-ui---------------------------------------------------------------
 function Calendar({
   className,
   classNames,
@@ -2980,81 +2934,12 @@ function Calendar({
   );
 }
 Calendar.displayName = 'Calendar';
-// card-ui---------------------------------------------------------------
-const Card = React.forwardRef<
-HTMLDivElement,
-React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-<div
-  ref={ref}
-  className={cn(
-    'rounded-lg border bg-card text-card-foreground shadow-sm',
-    className
-  )}
-  {...props}
-/>
-));
-Card.displayName = 'Card';
 
-const CardHeader = React.forwardRef<
-HTMLDivElement,
-React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-<div
-  ref={ref}
-  className={cn('flex flex-col space-y-1.5 p-6', className)}
-  {...props}
-/>
-));
-CardHeader.displayName = 'CardHeader';
+// carousal------------------------ 
 
-const CardTitle = React.forwardRef<
-HTMLParagraphElement,
-React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-<h3
-  ref={ref}
-  className={cn(
-    'text-2xl font-semibold leading-none tracking-tight',
-    className
-  )}
-  {...props}
-/>
-));
-CardTitle.displayName = 'CardTitle';
+ 
 
-const CardDescription = React.forwardRef<
-HTMLParagraphElement,
-React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
-<p
-  ref={ref}
-  className={cn('text-sm text-muted-foreground', className)}
-  {...props}
-/>
-));
-CardDescription.displayName = 'CardDescription';
-
-const CardContent = React.forwardRef<
-HTMLDivElement,
-React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-<div ref={ref} className={cn('p-6 pt-0', className)} {...props} />
-));
-CardContent.displayName = 'CardContent';
-
-const CardFooter = React.forwardRef<
-HTMLDivElement,
-React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-<div
-  ref={ref}
-  className={cn('flex items-center p-6 pt-0', className)}
-  {...props}
-/>
-));
-CardFooter.displayName = 'CardFooter';
-// Carousel ui---------------------------------------------------------------
+ 
 type CarouselApi = UseEmblaCarouselType[1];
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;
 type CarouselOptions = UseCarouselParameters[0];
@@ -3297,8 +3182,690 @@ const CarouselNext = React.forwardRef<
   );
 });
 CarouselNext.displayName = 'CarouselNext';
-//  chaeckbox-ui-----------------------------------
+// chart===============================
+ 
 
+ 
+// Format: { THEME_NAME: CSS_SELECTOR }
+const THEMES = { light: '', dark: '.dark' } as const;
+
+  type ChartConfig = {
+  [k in string]: {
+    label?: React.ReactNode;
+    icon?: React.ComponentType;
+  } & (
+    | { color?: string; theme?: never }
+    | { color?: never; theme: Record<keyof typeof THEMES, string> }
+  );
+};
+
+type ChartContextProps = {
+  config: ChartConfig;
+};
+
+const ChartContext = React.createContext<ChartContextProps | null>(null);
+
+function useChart() {
+  const context = React.useContext(ChartContext);
+
+  if (!context) {
+    throw new Error('useChart must be used within a <ChartContainer />');
+  }
+
+  return context;
+}
+
+const ChartContainer = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<'div'> & {
+    config: ChartConfig;
+    children: React.ComponentProps<
+      typeof RechartsPrimitive.ResponsiveContainer
+    >['children'];
+  }
+>(({ id, className, children, config, ...props }, ref) => {
+  const uniqueId = React.useId();
+  const chartId = `chart-${id || uniqueId.replace(/:/g, '')}`;
+
+  return (
+    <ChartContext.Provider value={{ config }}>
+      <div
+        data-chart={chartId}
+        ref={ref}
+        className={cn(
+          "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-none [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none",
+          className
+        )}
+        {...props}
+      >
+        <ChartStyle id={chartId} config={config} />
+        <RechartsPrimitive.ResponsiveContainer>
+          {children}
+        </RechartsPrimitive.ResponsiveContainer>
+      </div>
+    </ChartContext.Provider>
+  );
+});
+ChartContainer.displayName = 'Chart';
+
+const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
+  const colorConfig = Object.entries(config).filter(
+    ([, config]) => config.theme || config.color
+  );
+
+  if (!colorConfig.length) {
+    return null;
+  }
+
+  return (
+    <style
+      dangerouslySetInnerHTML={{
+        __html: Object.entries(THEMES)
+          .map(
+            ([theme, prefix]) => `
+${prefix} [data-chart=${id}] {
+${colorConfig
+  .map(([key, itemConfig]) => {
+    const color =
+      itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
+      itemConfig.color;
+    return color ? `  --color-${key}: ${color};` : null;
+  })
+  .join('\n')}
+}
+`
+          )
+          .join('\n'),
+      }}
+    />
+  );
+};
+
+const ChartTooltip = RechartsPrimitive.Tooltip;
+
+const ChartTooltipContent = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
+    React.ComponentProps<'div'> & {
+      hideLabel?: boolean;
+      hideIndicator?: boolean;
+      indicator?: 'line' | 'dot' | 'dashed';
+      nameKey?: string;
+      labelKey?: string;
+    }
+>(
+  (
+    {
+      active,
+      payload,
+      className,
+      indicator = 'dot',
+      hideLabel = false,
+      hideIndicator = false,
+      label,
+      labelFormatter,
+      labelClassName,
+      formatter,
+      color,
+      nameKey,
+      labelKey,
+    },
+    ref
+  ) => {
+    const { config } = useChart();
+
+    const tooltipLabel = React.useMemo(() => {
+      if (hideLabel || !payload?.length) {
+        return null;
+      }
+
+      const [item] = payload;
+      const key = `${labelKey || item.dataKey || item.name || 'value'}`;
+      const itemConfig = getPayloadConfigFromPayload(config, item, key);
+      const value =
+        !labelKey && typeof label === 'string'
+          ? config[label as keyof typeof config]?.label || label
+          : itemConfig?.label;
+
+      if (labelFormatter) {
+        return (
+          <div className={cn('font-medium', labelClassName)}>
+            {labelFormatter(value, payload)}
+          </div>
+        );
+      }
+
+      if (!value) {
+        return null;
+      }
+
+      return <div className={cn('font-medium', labelClassName)}>{value}</div>;
+    }, [
+      label,
+      labelFormatter,
+      payload,
+      hideLabel,
+      labelClassName,
+      config,
+      labelKey,
+    ]);
+
+    if (!active || !payload?.length) {
+      return null;
+    }
+
+    const nestLabel = payload.length === 1 && indicator !== 'dot';
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          'grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl',
+          className
+        )}
+      >
+        {!nestLabel ? tooltipLabel : null}
+        <div className="grid gap-1.5">
+          {payload.map((item, index) => {
+            const key = `${nameKey || item.name || item.dataKey || 'value'}`;
+            const itemConfig = getPayloadConfigFromPayload(config, item, key);
+            const indicatorColor = color || item.payload.fill || item.color;
+
+            return (
+              <div
+                key={item.dataKey}
+                className={cn(
+                  'flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5 [&>svg]:text-muted-foreground',
+                  indicator === 'dot' && 'items-center'
+                )}
+              >
+                {formatter && item?.value !== undefined && item.name ? (
+                  formatter(item.value, item.name, item, index, item.payload)
+                ) : (
+                  <>
+                    {itemConfig?.icon ? (
+                      <itemConfig.icon />
+                    ) : (
+                      !hideIndicator && (
+                        <div
+                          className={cn(
+                            'shrink-0 rounded-[2px] border-[--color-border] bg-[--color-bg]',
+                            {
+                              'h-2.5 w-2.5': indicator === 'dot',
+                              'w-1': indicator === 'line',
+                              'w-0 border-[1.5px] border-dashed bg-transparent':
+                                indicator === 'dashed',
+                              'my-0.5': nestLabel && indicator === 'dashed',
+                            }
+                          )}
+                          style={
+                            {
+                              '--color-bg': indicatorColor,
+                              '--color-border': indicatorColor,
+                            } as React.CSSProperties
+                          }
+                        />
+                      )
+                    )}
+                    <div
+                      className={cn(
+                        'flex flex-1 justify-between leading-none',
+                        nestLabel ? 'items-end' : 'items-center'
+                      )}
+                    >
+                      <div className="grid gap-1.5">
+                        {nestLabel ? tooltipLabel : null}
+                        <span className="text-muted-foreground">
+                          {itemConfig?.label || item.name}
+                        </span>
+                      </div>
+                      {item.value && (
+                        <span className="font-mono font-medium tabular-nums text-foreground">
+                          {item.value.toLocaleString()}
+                        </span>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+);
+ChartTooltipContent.displayName = 'ChartTooltip';
+
+const ChartLegend = RechartsPrimitive.Legend;
+
+const ChartLegendContent = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<'div'> &
+    Pick<RechartsPrimitive.LegendProps, 'payload' | 'verticalAlign'> & {
+      hideIcon?: boolean;
+      nameKey?: string;
+    }
+>(
+  (
+    { className, hideIcon = false, payload, verticalAlign = 'bottom', nameKey },
+    ref
+  ) => {
+    const { config } = useChart();
+
+    if (!payload?.length) {
+      return null;
+    }
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          'flex items-center justify-center gap-4',
+          verticalAlign === 'top' ? 'pb-3' : 'pt-3',
+          className
+        )}
+      >
+        {payload.map((item) => {
+          const key = `${nameKey || item.dataKey || 'value'}`;
+          const itemConfig = getPayloadConfigFromPayload(config, item, key);
+
+          return (
+            <div
+              key={item.value}
+              className={cn(
+                'flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground'
+              )}
+            >
+              {itemConfig?.icon && !hideIcon ? (
+                <itemConfig.icon />
+              ) : (
+                <div
+                  className="h-2 w-2 shrink-0 rounded-[2px]"
+                  style={{
+                    backgroundColor: item.color,
+                  }}
+                />
+              )}
+              {itemConfig?.label}
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+);
+ChartLegendContent.displayName = 'ChartLegend';
+
+// Helper to extract item config from a payload.
+function getPayloadConfigFromPayload(
+  config: ChartConfig,
+  payload: unknown,
+  key: string
+) {
+  if (typeof payload !== 'object' || payload === null) {
+    return undefined;
+  }
+
+  const payloadPayload =
+    'payload' in payload &&
+    typeof payload.payload === 'object' &&
+    payload.payload !== null
+      ? payload.payload
+      : undefined;
+
+  let configLabelKey: string = key;
+
+  if (
+    key in payload &&
+    typeof payload[key as keyof typeof payload] === 'string'
+  ) {
+    configLabelKey = payload[key as keyof typeof payload] as string;
+  } else if (
+    payloadPayload &&
+    key in payloadPayload &&
+    typeof payloadPayload[key as keyof typeof payloadPayload] === 'string'
+  ) {
+    configLabelKey = payloadPayload[
+      key as keyof typeof payloadPayload
+    ] as string;
+  }
+
+  return configLabelKey in config
+    ? config[configLabelKey]
+    : config[key as keyof typeof config];
+}
+// textarea--------------------
+ 
+ 
+const Textarea = React.forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement>>(
+  ({ className, ...props }, ref) => {
+    return (
+      <textarea
+        className={cn(
+          'flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+          className
+        )}
+        ref={ref}
+        {...props}
+      />
+    );
+  }
+);
+Textarea.displayName = 'Textarea';
+
+//  tab---------------------------------
+ 
+
+ 
+const Tabs = TabsPrimitive.Root;
+
+const TabsList = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.List>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
+>(({ className, ...props }, ref) => (
+  <TabsPrimitive.List
+    ref={ref}
+    className={cn(
+      'inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground',
+      className
+    )}
+    {...props}
+  />
+));
+TabsList.displayName = TabsPrimitive.List.displayName;
+
+const TabsTrigger = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
+>(({ className, ...props }, ref) => (
+  <TabsPrimitive.Trigger
+    ref={ref}
+    className={cn(
+      'inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
+      className
+    )}
+    {...props}
+  />
+));
+TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
+
+const TabsContent = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
+>(({ className, ...props }, ref) => (
+  <TabsPrimitive.Content
+    ref={ref}
+    className={cn(
+      'mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+      className
+    )}
+    {...props}
+  />
+));
+TabsContent.displayName = TabsPrimitive.Content.displayName;
+// table=========================
+ 
+ 
+const Table = React.forwardRef<
+  HTMLTableElement,
+  React.HTMLAttributes<HTMLTableElement>
+>(({ className, ...props }, ref) => (
+  <div className="relative w-full overflow-auto">
+    <table
+      ref={ref}
+      className={cn('w-full caption-bottom text-sm', className)}
+      {...props}
+    />
+  </div>
+));
+Table.displayName = 'Table';
+
+const TableHeader = React.forwardRef<
+  HTMLTableSectionElement,
+  React.HTMLAttributes<HTMLTableSectionElement>
+>(({ className, ...props }, ref) => (
+  <thead ref={ref} className={cn('[&_tr]:border-b', className)} {...props} />
+));
+TableHeader.displayName = 'TableHeader';
+
+const TableBody = React.forwardRef<
+  HTMLTableSectionElement,
+  React.HTMLAttributes<HTMLTableSectionElement>
+>(({ className, ...props }, ref) => (
+  <tbody
+    ref={ref}
+    className={cn('[&_tr:last-child]:border-0', className)}
+    {...props}
+  />
+));
+TableBody.displayName = 'TableBody';
+
+const TableFooter = React.forwardRef<
+  HTMLTableSectionElement,
+  React.HTMLAttributes<HTMLTableSectionElement>
+>(({ className, ...props }, ref) => (
+  <tfoot
+    ref={ref}
+    className={cn(
+      'border-t bg-muted/50 font-medium [&>tr]:last:border-b-0',
+      className
+    )}
+    {...props}
+  />
+));
+TableFooter.displayName = 'TableFooter';
+
+const TableRow = React.forwardRef<
+  HTMLTableRowElement,
+  React.HTMLAttributes<HTMLTableRowElement>
+>(({ className, ...props }, ref) => (
+  <tr
+    ref={ref}
+    className={cn(
+      'border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted',
+      className
+    )}
+    {...props}
+  />
+));
+TableRow.displayName = 'TableRow';
+
+const TableHead = React.forwardRef<
+  HTMLTableCellElement,
+  React.ThHTMLAttributes<HTMLTableCellElement>
+>(({ className, ...props }, ref) => (
+  <th
+    ref={ref}
+    className={cn(
+      'h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0',
+      className
+    )}
+    {...props}
+  />
+));
+TableHead.displayName = 'TableHead';
+
+const TableCell = React.forwardRef<
+  HTMLTableCellElement,
+  React.TdHTMLAttributes<HTMLTableCellElement>
+>(({ className, ...props }, ref) => (
+  <td
+    ref={ref}
+    className={cn('p-4 align-middle [&:has([role=checkbox])]:pr-0', className)}
+    {...props}
+  />
+));
+TableCell.displayName = 'TableCell';
+
+const TableCaption = React.forwardRef<
+  HTMLTableCaptionElement,
+  React.HTMLAttributes<HTMLTableCaptionElement>
+>(({ className, ...props }, ref) => (
+  <caption
+    ref={ref}
+    className={cn('mt-4 text-sm text-muted-foreground', className)}
+    {...props}
+  />
+));
+TableCaption.displayName = 'TableCaption';
+// swith-----------------------
+ 
+ 
+
+  
+const Switch = React.forwardRef<
+  React.ElementRef<typeof SwitchPrimitives.Root>,
+  React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>
+>(({ className, ...props }, ref) => (
+  <SwitchPrimitives.Root
+    className={cn(
+      'peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input',
+      className
+    )}
+    {...props}
+    ref={ref}
+  >
+    <SwitchPrimitives.Thumb
+      className={cn(
+        'pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0'
+      )}
+    />
+  </SwitchPrimitives.Root>
+));
+Switch.displayName = SwitchPrimitives.Root.displayName;
+
+// sonner---------------------------
+ 
+//  import { Toaster as Sonner } from 'sonner';
+
+// type ToasterProps = React.ComponentProps<typeof Sonner>;
+
+// const Toaster = ({ ...props }: ToasterProps) => {
+//   const { theme = 'system' } = useTheme();
+
+//   return (
+//     <Sonner
+//       theme={theme as ToasterProps['theme']}
+//       className="toaster group"
+//       toastOptions={{
+//         classNames: {
+//           toast:
+//             'group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg',
+//           description: 'group-[.toast]:text-muted-foreground',
+//           actionButton:
+//             'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground',
+//           cancelButton:
+//             'group-[.toast]:bg-muted group-[.toast]:text-muted-foreground',
+//         },
+//       }}
+//       {...props}
+//     />
+//   );
+// };
+// toggleVariants--------------
+ 
+ import * as TogglePrimitive from '@radix-ui/react-toggle';
+ 
+ 
+const toggleVariants = cva(
+  'inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground',
+  {
+    variants: {
+      variant: {
+        default: 'bg-transparent',
+        outline:
+          'border border-input bg-transparent hover:bg-accent hover:text-accent-foreground',
+      },
+      size: {
+        default: 'h-10 px-3',
+        sm: 'h-9 px-2.5',
+        lg: 'h-11 px-5',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
+    },
+  }
+);
+
+const Toggle = React.forwardRef<
+  React.ElementRef<typeof TogglePrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root> &
+    VariantProps<typeof toggleVariants>
+>(({ className, variant, size, ...props }, ref) => (
+  <TogglePrimitive.Root
+    ref={ref}
+    className={cn(toggleVariants({ variant, size, className }))}
+    {...props}
+  />
+));
+
+Toggle.displayName = TogglePrimitive.Root.displayName;
+
+ 
+// ToggleGroupContext--------------
+
+
+ 
+const ToggleGroupContext = React.createContext<
+  VariantProps<typeof toggleVariants>
+>({
+  size: 'default',
+  variant: 'default',
+});
+
+const ToggleGroup = React.forwardRef<
+  React.ElementRef<typeof ToggleGroupPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> &
+    VariantProps<typeof toggleVariants>
+>(({ className, variant, size, children, ...props }, ref) => (
+  <ToggleGroupPrimitive.Root
+    ref={ref}
+    className={cn('flex items-center justify-center gap-1', className)}
+    {...props}
+  >
+    <ToggleGroupContext.Provider value={{ variant, size }}>
+      {children}
+    </ToggleGroupContext.Provider>
+  </ToggleGroupPrimitive.Root>
+));
+
+ToggleGroup.displayName = ToggleGroupPrimitive.Root.displayName;
+
+const ToggleGroupItem = React.forwardRef<
+  React.ElementRef<typeof ToggleGroupPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item> &
+    VariantProps<typeof toggleVariants>
+>(({ className, children, variant, size, ...props }, ref) => {
+  const context = React.useContext(ToggleGroupContext);
+
+  return (
+    <ToggleGroupPrimitive.Item
+      ref={ref}
+      className={cn(
+        toggleVariants({
+          variant: context.variant || variant,
+          size: context.size || size,
+        }),
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </ToggleGroupPrimitive.Item>
+  );
+});
+
+ToggleGroupItem.displayName = ToggleGroupPrimitive.Item.displayName;
+
+ 
+// checkbox--------------
+ 
+
+
+ 
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>
@@ -3320,421 +3887,490 @@ const Checkbox = React.forwardRef<
 ));
 Checkbox.displayName = CheckboxPrimitive.Root.displayName;
 
-
-const Collapsible = CollapsiblePrimitive.Root;
-
-const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger;
-
-const CollapsibleContent = CollapsiblePrimitive.CollapsibleContent;
+//  card------------------
  
-const Command = React.forwardRef<
-React.ElementRef<typeof CommandPrimitive>,
-React.ComponentPropsWithoutRef<typeof CommandPrimitive>
+ 
+const Card = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-<CommandPrimitive
-  ref={ref}
-  className={cn(
-    'flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground',
-    className
-  )}
-  {...props}
-/>
-));
-Command.displayName = CommandPrimitive.displayName;
-
-const CommandDialog = ({ children, ...props }: DialogProps) => {
-return (
-  <Dialog {...props}>
-    <DialogContent className="overflow-hidden p-0 shadow-lg">
-      <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
-        {children}
-      </Command>
-    </DialogContent>
-  </Dialog>
-);
-};
-
-const CommandInput = React.forwardRef<
-React.ElementRef<typeof CommandPrimitive.Input>,
-React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
->(({ className, ...props }, ref) => (
-<div className="flex items-center border-b px-3" cmdk-input-wrapper="">
-  <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-  <CommandPrimitive.Input
+  <div
     ref={ref}
     className={cn(
-      'flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50',
+      'rounded-lg border bg-card text-card-foreground shadow-sm',
       className
     )}
     {...props}
   />
-</div>
 ));
+Card.displayName = 'Card';
 
-CommandInput.displayName = CommandPrimitive.Input.displayName;
-
-const CommandList = React.forwardRef<
-React.ElementRef<typeof CommandPrimitive.List>,
-React.ComponentPropsWithoutRef<typeof CommandPrimitive.List>
+const CardHeader = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-<CommandPrimitive.List
-  ref={ref}
-  className={cn('max-h-[300px] overflow-y-auto overflow-x-hidden', className)}
-  {...props}
-/>
+  <div
+    ref={ref}
+    className={cn('flex flex-col space-y-1.5 p-6', className)}
+    {...props}
+  />
 ));
+CardHeader.displayName = 'CardHeader';
 
-CommandList.displayName = CommandPrimitive.List.displayName;
-
-const CommandEmpty = React.forwardRef<
-React.ElementRef<typeof CommandPrimitive.Empty>,
-React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
->((props, ref) => (
-<CommandPrimitive.Empty
-  ref={ref}
-  className="py-6 text-center text-sm"
-  {...props}
-/>
-));
-
-CommandEmpty.displayName = CommandPrimitive.Empty.displayName;
-
-const CommandGroup = React.forwardRef<
-React.ElementRef<typeof CommandPrimitive.Group>,
-React.ComponentPropsWithoutRef<typeof CommandPrimitive.Group>
+const CardTitle = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
-<CommandPrimitive.Group
-  ref={ref}
-  className={cn(
-    'overflow-hidden p-1 text-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground',
-    className
-  )}
-  {...props}
-/>
-));
-
-CommandGroup.displayName = CommandPrimitive.Group.displayName;
-
-const CommandSeparator = React.forwardRef<
-React.ElementRef<typeof CommandPrimitive.Separator>,
-React.ComponentPropsWithoutRef<typeof CommandPrimitive.Separator>
->(({ className, ...props }, ref) => (
-<CommandPrimitive.Separator
-  ref={ref}
-  className={cn('-mx-1 h-px bg-border', className)}
-  {...props}
-/>
-));
-CommandSeparator.displayName = CommandPrimitive.Separator.displayName;
-
-const CommandItem = React.forwardRef<
-React.ElementRef<typeof CommandPrimitive.Item>,
-React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
->(({ className, ...props }, ref) => (
-<CommandPrimitive.Item
-  ref={ref}
-  className={cn(
-    "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none data-[disabled=true]:pointer-events-none data-[selected='true']:bg-accent data-[selected=true]:text-accent-foreground data-[disabled=true]:opacity-50",
-    className
-  )}
-  {...props}
-/>
-));
-
-CommandItem.displayName = CommandPrimitive.Item.displayName;
-
-const CommandShortcut = ({
-className,
-...props
-}: React.HTMLAttributes<HTMLSpanElement>) => {
-return (
-  <span
+  <h3
+    ref={ref}
     className={cn(
-      'ml-auto text-xs tracking-widest text-muted-foreground',
+      'text-2xl font-semibold leading-none tracking-tight',
       className
     )}
     {...props}
   />
-);
-};
-CommandShortcut.displayName = 'CommandShortcut';
+));
+CardTitle.displayName = 'CardTitle';
 
- 
-const ContextMenu = ContextMenuPrimitive.Root;
+const CardDescription = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => (
+  <p
+    ref={ref}
+    className={cn('text-sm text-muted-foreground', className)}
+    {...props}
+  />
+));
+CardDescription.displayName = 'CardDescription';
 
-const ContextMenuTrigger = ContextMenuPrimitive.Trigger;
+const CardContent = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn('p-6 pt-0', className)} {...props} />
+));
+CardContent.displayName = 'CardContent';
 
-const ContextMenuGroup = ContextMenuPrimitive.Group;
-
-const ContextMenuPortal = ContextMenuPrimitive.Portal;
-
-const ContextMenuSub = ContextMenuPrimitive.Sub;
-
-const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup;
-
-const ContextMenuSubTrigger = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.SubTrigger>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.SubTrigger> & {
-    inset?: boolean;
+const CardFooter = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn('flex items-center p-6 pt-0', className)}
+    {...props}
+  />
+));
+CardFooter.displayName = 'CardFooter';
+// badgeVariants------------------
+const badgeVariants = cva(
+  'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+  {
+    variants: {
+      variant: {
+        default:
+          'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
+        secondary:
+          'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        destructive:
+          'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
+        outline: 'text-foreground',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
   }
->(({ className, inset, children, ...props }, ref) => (
-  <ContextMenuPrimitive.SubTrigger
-    ref={ref}
-    className={cn(
-      'flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
-      inset && 'pl-8',
-      className
-    )}
-    {...props}
-  >
-    {children}
-    <ChevronRight className="ml-auto h-4 w-4" />
-  </ContextMenuPrimitive.SubTrigger>
-));
-ContextMenuSubTrigger.displayName = ContextMenuPrimitive.SubTrigger.displayName;
+);
 
-const ContextMenuSubContent = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.SubContent>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.SubContent>
+  interface BadgeProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof badgeVariants> {}
+
+function Badge({ className, variant, ...props }: BadgeProps) {
+  return (
+    <div className={cn(badgeVariants({ variant }), className)} {...props} />
+  );
+}
+// accordion-------------------
+ 
+
+ 
+const Accordion = AccordionPrimitive.Root;
+
+const AccordionItem = React.forwardRef<
+  React.ElementRef<typeof AccordionPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
 >(({ className, ...props }, ref) => (
-  <ContextMenuPrimitive.SubContent
+  <AccordionPrimitive.Item
     ref={ref}
-    className={cn(
-      'z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-      className
-    )}
+    className={cn('border-b', className)}
     {...props}
   />
 ));
-ContextMenuSubContent.displayName = ContextMenuPrimitive.SubContent.displayName;
+AccordionItem.displayName = 'AccordionItem';
 
-const ContextMenuContent = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Content>
->(({ className, ...props }, ref) => (
-  <ContextMenuPrimitive.Portal>
-    <ContextMenuPrimitive.Content
+const AccordionTrigger = React.forwardRef<
+  React.ElementRef<typeof AccordionPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
+>(({ className, children, ...props }, ref) => (
+  <AccordionPrimitive.Header className="flex">
+    <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(
-        'z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md animate-in fade-in-80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+        'flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180',
         className
       )}
       {...props}
-    />
-  </ContextMenuPrimitive.Portal>
+    >
+      {children}
+      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
+    </AccordionPrimitive.Trigger>
+  </AccordionPrimitive.Header>
 ));
-ContextMenuContent.displayName = ContextMenuPrimitive.Content.displayName;
+AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
 
-const ContextMenuItem = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Item> & {
-    inset?: boolean;
-  }
->(({ className, inset, ...props }, ref) => (
-  <ContextMenuPrimitive.Item
-    ref={ref}
-    className={cn(
-      'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-      inset && 'pl-8',
-      className
-    )}
-    {...props}
-  />
-));
-ContextMenuItem.displayName = ContextMenuPrimitive.Item.displayName;
-
-const ContextMenuCheckboxItem = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.CheckboxItem>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.CheckboxItem>
->(({ className, children, checked, ...props }, ref) => (
-  <ContextMenuPrimitive.CheckboxItem
-    ref={ref}
-    className={cn(
-      'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-      className
-    )}
-    checked={checked}
-    {...props}
-  >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-      <ContextMenuPrimitive.ItemIndicator>
-        <Check className="h-4 w-4" />
-      </ContextMenuPrimitive.ItemIndicator>
-    </span>
-    {children}
-  </ContextMenuPrimitive.CheckboxItem>
-));
-ContextMenuCheckboxItem.displayName =
-  ContextMenuPrimitive.CheckboxItem.displayName;
-
-const ContextMenuRadioItem = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.RadioItem>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.RadioItem>
+const AccordionContent = React.forwardRef<
+  React.ElementRef<typeof AccordionPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
-  <ContextMenuPrimitive.RadioItem
+  <AccordionPrimitive.Content
     ref={ref}
-    className={cn(
-      'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-      className
-    )}
+    className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
     {...props}
   >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-      <ContextMenuPrimitive.ItemIndicator>
-        <Circle className="h-2 w-2 fill-current" />
-      </ContextMenuPrimitive.ItemIndicator>
-    </span>
-    {children}
-  </ContextMenuPrimitive.RadioItem>
+    <div className={cn('pb-4 pt-0', className)}>{children}</div>
+  </AccordionPrimitive.Content>
 ));
-ContextMenuRadioItem.displayName = ContextMenuPrimitive.RadioItem.displayName;
 
-const ContextMenuLabel = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.Label>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Label> & {
-    inset?: boolean;
-  }
->(({ className, inset, ...props }, ref) => (
-  <ContextMenuPrimitive.Label
+AccordionContent.displayName = AccordionPrimitive.Content.displayName;
+// avatarrrr-------------------
+  
+const Avatar = React.forwardRef<
+  React.ElementRef<typeof AvatarPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
+>(({ className, ...props }, ref) => (
+  <AvatarPrimitive.Root
     ref={ref}
     className={cn(
-      'px-2 py-1.5 text-sm font-semibold text-foreground',
-      inset && 'pl-8',
+      'relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full',
       className
     )}
     {...props}
   />
 ));
-ContextMenuLabel.displayName = ContextMenuPrimitive.Label.displayName;
+Avatar.displayName = AvatarPrimitive.Root.displayName;
 
-const ContextMenuSeparator = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.Separator>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Separator>
+const AvatarImage = React.forwardRef<
+  React.ElementRef<typeof AvatarPrimitive.Image>,
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
 >(({ className, ...props }, ref) => (
-  <ContextMenuPrimitive.Separator
+  <AvatarPrimitive.Image
     ref={ref}
-    className={cn('-mx-1 my-1 h-px bg-border', className)}
+    className={cn('aspect-square h-full w-full', className)}
     {...props}
   />
 ));
-ContextMenuSeparator.displayName = ContextMenuPrimitive.Separator.displayName;
+AvatarImage.displayName = AvatarPrimitive.Image.displayName;
 
-const ContextMenuShortcut = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLSpanElement>) => {
+const AvatarFallback = React.forwardRef<
+  React.ElementRef<typeof AvatarPrimitive.Fallback>,
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
+>(({ className, ...props }, ref) => (
+  <AvatarPrimitive.Fallback
+    ref={ref}
+    className={cn(
+      'flex h-full w-full items-center justify-center rounded-full bg-muted',
+      className
+    )}
+    {...props}
+  />
+));
+AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
+// AspectRatio
+
+const AspectRatio = AspectRatioPrimitive.Root;
+
+
+  // Breadcrumb=========================
+ 
+const Breadcrumb = React.forwardRef<
+  HTMLElement,
+  React.ComponentPropsWithoutRef<'nav'> & {
+    separator?: React.ReactNode;
+  }
+>(({ ...props }, ref) => <nav ref={ref} aria-label="breadcrumb" {...props} />);
+Breadcrumb.displayName = 'Breadcrumb';
+
+const BreadcrumbList = React.forwardRef<
+  HTMLOListElement,
+  React.ComponentPropsWithoutRef<'ol'>
+>(({ className, ...props }, ref) => (
+  <ol
+    ref={ref}
+    className={cn(
+      'flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5',
+      className
+    )}
+    {...props}
+  />
+));
+BreadcrumbList.displayName = 'BreadcrumbList';
+
+const BreadcrumbItem = React.forwardRef<
+  HTMLLIElement,
+  React.ComponentPropsWithoutRef<'li'>
+>(({ className, ...props }, ref) => (
+  <li
+    ref={ref}
+    className={cn('inline-flex items-center gap-1.5', className)}
+    {...props}
+  />
+));
+BreadcrumbItem.displayName = 'BreadcrumbItem';
+
+const BreadcrumbLink = React.forwardRef<
+  HTMLAnchorElement,
+  React.ComponentPropsWithoutRef<'a'> & {
+    asChild?: boolean;
+  }
+>(({ asChild, className, ...props }, ref) => {
+  const Comp = asChild ? Slot : 'a';
+
   return (
-    <span
-      className={cn(
-        'ml-auto text-xs tracking-widest text-muted-foreground',
-        className
-      )}
+    <Comp
+      ref={ref}
+      className={cn('transition-colors hover:text-foreground', className)}
       {...props}
     />
   );
-};
-ContextMenuShortcut.displayName = 'ContextMenuShortcut';
+});
+BreadcrumbLink.displayName = 'BreadcrumbLink';
+
+const BreadcrumbPage = React.forwardRef<
+  HTMLSpanElement,
+  React.ComponentPropsWithoutRef<'span'>
+>(({ className, ...props }, ref) => (
+  <span
+    ref={ref}
+    role="link"
+    aria-disabled="true"
+    aria-current="page"
+    className={cn('font-normal text-foreground', className)}
+    {...props}
+  />
+));
+BreadcrumbPage.displayName = 'BreadcrumbPage';
+
+const BreadcrumbSeparator = ({
+  children,
+  className,
+  ...props
+}: React.ComponentProps<'li'>) => (
+  <li
+    role="presentation"
+    aria-hidden="true"
+    className={cn('[&>svg]:size-3.5', className)}
+    {...props}
+  >
+    {children ?? <ChevronRight />}
+  </li>
+);
+BreadcrumbSeparator.displayName = 'BreadcrumbSeparator';
+
+const BreadcrumbEllipsis = ({
+  className,
+  ...props
+}: React.ComponentProps<'span'>) => (
+  <span
+    role="presentation"
+    aria-hidden="true"
+    className={cn('flex h-9 w-9 items-center justify-center', className)}
+    {...props}
+  >
+    <MoreHorizontal className="h-4 w-4" />
+    <span className="sr-only">More</span>
+  </span>
+);
+BreadcrumbEllipsis.displayName = 'BreadcrumbElipssis';
+  // CollapsibleContent-----------------------------------------
+
+ 
+// const Collapsible = CollapsiblePrimitive.Root;
+
+// const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger;
+
+// const CollapsibleContent = CollapsiblePrimitive.CollapsibleContent;
+  //  Progress-----------------------------------
+
+
+ 
+const Progress = React.forwardRef<
+  React.ElementRef<typeof ProgressPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
+>(({ className, value, ...props }, ref) => (
+  <ProgressPrimitive.Root
+    ref={ref}
+    className={cn(
+      'relative h-4 w-full overflow-hidden rounded-full bg-secondary',
+      className
+    )}
+    {...props}
+  >
+    <ProgressPrimitive.Indicator
+      className="h-full w-full flex-1 bg-primary transition-all"
+      style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+    />
+  </ProgressPrimitive.Root>
+));
+Progress.displayName = ProgressPrimitive.Root.displayName;
+
+ 
+  //  Dialog-----------------------------------
+
+ 
+ 
 // const Dialog = DialogPrimitive.Root;
 
 // const DialogTrigger = DialogPrimitive.Trigger;
 
-// const DialogPortal = DialogPrimitive.Portal;
+const DialogPortal = DialogPrimitive.Portal;
 
 // const DialogClose = DialogPrimitive.Close;
 
-// const DialogOverlay = React.forwardRef<
-//   React.ElementRef<typeof DialogPrimitive.Overlay>,
-//   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
-// >(({ className, ...props }, ref) => (
-//   <DialogPrimitive.Overlay
-//     ref={ref}
-//     className={cn(
-//       'fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-//       className
-//     )}
-//     {...props}
-//   />
-// ));
-// DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
+const DialogOverlay = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Overlay>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Overlay
+    ref={ref}
+    className={cn(
+      'fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+      className
+    )}
+    {...props}
+  />
+));
+DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
-// const DialogContent = React.forwardRef<
-//   React.ElementRef<typeof DialogPrimitive.Content>,
-//   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
-// >(({ className, children, ...props }, ref) => (
-//   <DialogPortal>
-//     <DialogOverlay />
-//     <DialogPrimitive.Content
-//       ref={ref}
-//       className={cn(
-//         'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg',
-//         className
-//       )}
-//       {...props}
-//     >
-//       {children}
-//       <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-//         <X className="h-4 w-4" />
-//         <span className="sr-only">Close</span>
-//       </DialogPrimitive.Close>
-//     </DialogPrimitive.Content>
-//   </DialogPortal>
-// ));
-// DialogContent.displayName = DialogPrimitive.Content.displayName;
+const DialogContent = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
+>(({ className, children, ...props }, ref) => (
+  <DialogPortal>
+    <DialogOverlay />
+    <DialogPrimitive.Content
+      ref={ref}
+      className={cn(
+        'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg',
+        className
+      )}
+      {...props}
+    >
+      {children}
+      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+        <X className="h-4 w-4" />
+        <span className="sr-only">Close</span>
+      </DialogPrimitive.Close>
+    </DialogPrimitive.Content>
+  </DialogPortal>
+));
+DialogContent.displayName = DialogPrimitive.Content.displayName;
 
-// const DialogHeader = ({
-//   className,
-//   ...props
-// }: React.HTMLAttributes<HTMLDivElement>) => (
-//   <div
-//     className={cn(
-//       'flex flex-col space-y-1.5 text-center sm:text-left',
-//       className
-//     )}
-//     {...props}
-//   />
-// );
-// DialogHeader.displayName = 'DialogHeader';
+const DialogHeader = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn(
+      'flex flex-col space-y-1.5 text-center sm:text-left',
+      className
+    )}
+    {...props}
+  />
+);
+DialogHeader.displayName = 'DialogHeader';
 
-// const DialogFooter = ({
-//   className,
-//   ...props
-// }: React.HTMLAttributes<HTMLDivElement>) => (
-//   <div
-//     className={cn(
-//       'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
-//       className
-//     )}
-//     {...props}
-//   />
-// );
-// DialogFooter.displayName = 'DialogFooter';
+const DialogFooter = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn(
+      'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
+      className
+    )}
+    {...props}
+  />
+);
+DialogFooter.displayName = 'DialogFooter';
 
-// const DialogTitle = React.forwardRef<
-//   React.ElementRef<typeof DialogPrimitive.Title>,
-//   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
-// >(({ className, ...props }, ref) => (
-//   <DialogPrimitive.Title
-//     ref={ref}
-//     className={cn(
-//       'text-lg font-semibold leading-none tracking-tight',
-//       className
-//     )}
-//     {...props}
-//   />
-// ));
-// DialogTitle.displayName = DialogPrimitive.Title.displayName;
+const DialogTitle = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Title>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Title
+    ref={ref}
+    className={cn(
+      'text-lg font-semibold leading-none tracking-tight',
+      className
+    )}
+    {...props}
+  />
+));
+DialogTitle.displayName = DialogPrimitive.Title.displayName;
 
-// const DialogDescription = React.forwardRef<
-//   React.ElementRef<typeof DialogPrimitive.Description>,
-//   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
-// >(({ className, ...props }, ref) => (
-//   <DialogPrimitive.Description
-//     ref={ref}
-//     className={cn('text-sm text-muted-foreground', className)}
-//     {...props}
-//   />
-// ));
-// DialogDescription.displayName = DialogPrimitive.Description.displayName;
+const DialogDescription = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Description>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Description
+    ref={ref}
+    className={cn('text-sm text-muted-foreground', className)}
+    {...props}
+  />
+));
+DialogDescription.displayName = DialogPrimitive.Description.displayName;
+
+function Skeleton({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn('animate-pulse rounded-md bg-muted', className)}
+      {...props}
+    />
+  );
+}
+ //  Drawer-----------------------------------
+
+
+ 
+const Slider = React.forwardRef<
+  React.ElementRef<typeof SliderPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>
+>(({ className, ...props }, ref) => (
+  <SliderPrimitive.Root
+    ref={ref}
+    className={cn(
+      'relative flex w-full touch-none select-none items-center',
+      className
+    )}
+    {...props}
+  >
+    <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary">
+      <SliderPrimitive.Range className="absolute h-full bg-primary" />
+    </SliderPrimitive.Track>
+    <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50" />
+  </SliderPrimitive.Root>
+));
+Slider.displayName = SliderPrimitive.Root.displayName;
+
+ 
+ //  Drawer-----------------------------------
+ 
 
 const Drawer = ({
   shouldScaleBackground = true,
@@ -3747,11 +4383,11 @@ const Drawer = ({
 );
 Drawer.displayName = 'Drawer';
 
-const DrawerTrigger = DrawerPrimitive.Trigger;
+// const DrawerTrigger = DrawerPrimitive.Trigger;
 
 const DrawerPortal = DrawerPrimitive.Portal;
 
-const DrawerClose = DrawerPrimitive.Close;
+// const DrawerClose = DrawerPrimitive.Close;
 
 const DrawerOverlay = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Overlay>,
@@ -3835,6 +4471,377 @@ const DrawerDescription = React.forwardRef<
 ));
 DrawerDescription.displayName = DrawerPrimitive.Description.displayName;
 
+ 
+
+ //  Command-----------------------------------
+
+
+ 
+
+const Command = React.forwardRef<
+  React.ElementRef<typeof CommandPrimitive>,
+  React.ComponentPropsWithoutRef<typeof CommandPrimitive>
+>(({ className, ...props }, ref) => (
+  <CommandPrimitive
+    ref={ref}
+    className={cn(
+      'flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground',
+      className
+    )}
+    {...props}
+  />
+));
+Command.displayName = CommandPrimitive.displayName;
+
+// const CommandDialog = ({ children, ...props }: DialogProps) => {
+//   return (
+//     <Dialog {...props}>
+//       <DialogContent className="overflow-hidden p-0 shadow-lg">
+//         <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
+//           {children}
+//         </Command>
+//       </DialogContent>
+//     </Dialog>
+//   );
+// };
+
+const CommandInput = React.forwardRef<
+  React.ElementRef<typeof CommandPrimitive.Input>,
+  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
+>(({ className, ...props }, ref) => (
+  <div className="flex items-center border-b px-3" cmdk-input-wrapper="">
+    <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+    <CommandPrimitive.Input
+      ref={ref}
+      className={cn(
+        'flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50',
+        className
+      )}
+      {...props}
+    />
+  </div>
+));
+
+CommandInput.displayName = CommandPrimitive.Input.displayName;
+
+const CommandList = React.forwardRef<
+  React.ElementRef<typeof CommandPrimitive.List>,
+  React.ComponentPropsWithoutRef<typeof CommandPrimitive.List>
+>(({ className, ...props }, ref) => (
+  <CommandPrimitive.List
+    ref={ref}
+    className={cn('max-h-[300px] overflow-y-auto overflow-x-hidden', className)}
+    {...props}
+  />
+));
+
+CommandList.displayName = CommandPrimitive.List.displayName;
+
+const CommandEmpty = React.forwardRef<
+  React.ElementRef<typeof CommandPrimitive.Empty>,
+  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
+>((props, ref) => (
+  <CommandPrimitive.Empty
+    ref={ref}
+    className="py-6 text-center text-sm"
+    {...props}
+  />
+));
+
+CommandEmpty.displayName = CommandPrimitive.Empty.displayName;
+
+const CommandGroup = React.forwardRef<
+  React.ElementRef<typeof CommandPrimitive.Group>,
+  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Group>
+>(({ className, ...props }, ref) => (
+  <CommandPrimitive.Group
+    ref={ref}
+    className={cn(
+      'overflow-hidden p-1 text-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground',
+      className
+    )}
+    {...props}
+  />
+));
+
+CommandGroup.displayName = CommandPrimitive.Group.displayName;
+
+const CommandSeparator = React.forwardRef<
+  React.ElementRef<typeof CommandPrimitive.Separator>,
+  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Separator>
+>(({ className, ...props }, ref) => (
+  <CommandPrimitive.Separator
+    ref={ref}
+    className={cn('-mx-1 h-px bg-border', className)}
+    {...props}
+  />
+));
+CommandSeparator.displayName = CommandPrimitive.Separator.displayName;
+
+const CommandItem = React.forwardRef<
+  React.ElementRef<typeof CommandPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
+>(({ className, ...props }, ref) => (
+  <CommandPrimitive.Item
+    ref={ref}
+    className={cn(
+      "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none data-[disabled=true]:pointer-events-none data-[selected='true']:bg-accent data-[selected=true]:text-accent-foreground data-[disabled=true]:opacity-50",
+      className
+    )}
+    {...props}
+  />
+));
+
+CommandItem.displayName = CommandPrimitive.Item.displayName;
+
+const CommandShortcut = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLSpanElement>) => {
+  return (
+    <span
+      className={cn(
+        'ml-auto text-xs tracking-widest text-muted-foreground',
+        className
+      )}
+      {...props}
+    />
+  );
+};
+CommandShortcut.displayName = 'CommandShortcut';
+
+  // DropdownMenu-----------------------------------------
+
+ 
+ 
+const RadioGroup = React.forwardRef<
+  React.ElementRef<typeof RadioGroupPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>
+>(({ className, ...props }, ref) => {
+  return (
+    <RadioGroupPrimitive.Root
+      className={cn('grid gap-2', className)}
+      {...props}
+      ref={ref}
+    />
+  );
+});
+RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
+
+const RadioGroupItem = React.forwardRef<
+  React.ElementRef<typeof RadioGroupPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>
+>(({ className, ...props }, ref) => {
+  return (
+    <RadioGroupPrimitive.Item
+      ref={ref}
+      className={cn(
+        'aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+        className
+      )}
+      {...props}
+    >
+      <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
+        <Circle className="h-2.5 w-2.5 fill-current text-current" />
+      </RadioGroupPrimitive.Indicator>
+    </RadioGroupPrimitive.Item>
+  );
+});
+RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
+ 
+
+  // DropdownMenu-----------------------------------------
+
+const Select = SelectPrimitive.Root;
+
+const SelectGroup = SelectPrimitive.Group;
+
+const SelectValue = SelectPrimitive.Value;
+
+const SelectTrigger = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
+>(({ className, children, ...props }, ref) => (
+  <SelectPrimitive.Trigger
+    ref={ref}
+    className={cn(
+      'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
+      className
+    )}
+    {...props}
+  >
+    {children}
+    <SelectPrimitive.Icon asChild>
+      <ChevronDown className="h-4 w-4 opacity-50" />
+    </SelectPrimitive.Icon>
+  </SelectPrimitive.Trigger>
+));
+SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
+
+const SelectScrollUpButton = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.ScrollUpButton>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>
+>(({ className, ...props }, ref) => (
+  <SelectPrimitive.ScrollUpButton
+    ref={ref}
+    className={cn(
+      'flex cursor-default items-center justify-center py-1',
+      className
+    )}
+    {...props}
+  >
+    <ChevronUp className="h-4 w-4" />
+  </SelectPrimitive.ScrollUpButton>
+));
+SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
+
+const SelectScrollDownButton = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.ScrollDownButton>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>
+>(({ className, ...props }, ref) => (
+  <SelectPrimitive.ScrollDownButton
+    ref={ref}
+    className={cn(
+      'flex cursor-default items-center justify-center py-1',
+      className
+    )}
+    {...props}
+  >
+    <ChevronDown className="h-4 w-4" />
+  </SelectPrimitive.ScrollDownButton>
+));
+SelectScrollDownButton.displayName =
+  SelectPrimitive.ScrollDownButton.displayName;
+
+const SelectContent = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
+>(({ className, children, position = 'popper', ...props }, ref) => (
+  <SelectPrimitive.Portal>
+    <SelectPrimitive.Content
+      ref={ref}
+      className={cn(
+        'relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+        position === 'popper' &&
+          'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
+        className
+      )}
+      position={position}
+      {...props}
+    >
+      <SelectScrollUpButton />
+      <SelectPrimitive.Viewport
+        className={cn(
+          'p-1',
+          position === 'popper' &&
+            'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]'
+        )}
+      >
+        {children}
+      </SelectPrimitive.Viewport>
+      <SelectScrollDownButton />
+    </SelectPrimitive.Content>
+  </SelectPrimitive.Portal>
+));
+SelectContent.displayName = SelectPrimitive.Content.displayName;
+
+const SelectLabel = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Label>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
+>(({ className, ...props }, ref) => (
+  <SelectPrimitive.Label
+    ref={ref}
+    className={cn('py-1.5 pl-8 pr-2 text-sm font-semibold', className)}
+    {...props}
+  />
+));
+SelectLabel.displayName = SelectPrimitive.Label.displayName;
+
+const SelectItem = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
+>(({ className, children, ...props }, ref) => (
+  <SelectPrimitive.Item
+    ref={ref}
+    className={cn(
+      'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      className
+    )}
+    {...props}
+  >
+    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+      <SelectPrimitive.ItemIndicator>
+        <Check className="h-4 w-4" />
+      </SelectPrimitive.ItemIndicator>
+    </span>
+
+    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+  </SelectPrimitive.Item>
+));
+SelectItem.displayName = SelectPrimitive.Item.displayName;
+
+const SelectSeparator = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Separator>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
+>(({ className, ...props }, ref) => (
+  <SelectPrimitive.Separator
+    ref={ref}
+    className={cn('-mx-1 my-1 h-px bg-muted', className)}
+    {...props}
+  />
+));
+SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
+
+ 
+  // DropdownMenu-----------------------------------------
+
+
+ 
+const ScrollArea = React.forwardRef<
+  React.ElementRef<typeof ScrollAreaPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
+>(({ className, children, ...props }, ref) => (
+  <ScrollAreaPrimitive.Root
+    ref={ref}
+    className={cn('relative overflow-hidden', className)}
+    {...props}
+  >
+    <ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit]">
+      {children}
+    </ScrollAreaPrimitive.Viewport>
+    <ScrollBar />
+    <ScrollAreaPrimitive.Corner />
+  </ScrollAreaPrimitive.Root>
+));
+ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName;
+
+const ScrollBar = React.forwardRef<
+  React.ElementRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>,
+  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>
+>(({ className, orientation = 'vertical', ...props }, ref) => (
+  <ScrollAreaPrimitive.ScrollAreaScrollbar
+    ref={ref}
+    orientation={orientation}
+    className={cn(
+      'flex touch-none select-none transition-colors',
+      orientation === 'vertical' &&
+        'h-full w-2.5 border-l border-l-transparent p-[1px]',
+      orientation === 'horizontal' &&
+        'h-2.5 flex-col border-t border-t-transparent p-[1px]',
+      className
+    )}
+    {...props}
+  >
+    <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-border" />
+  </ScrollAreaPrimitive.ScrollAreaScrollbar>
+));
+ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName;
+
+ 
+  // DropdownMenu-----------------------------------------
+
+
+ import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 
 // const DropdownMenu = DropdownMenuPrimitive.Root;
 
@@ -3886,105 +4893,105 @@ const DropdownMenuSubContent = React.forwardRef<
 DropdownMenuSubContent.displayName =
   DropdownMenuPrimitive.SubContent.displayName;
 
-// const DropdownMenuContent = React.forwardRef<
-//   React.ElementRef<typeof DropdownMenuPrimitive.Content>,
-//   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
-// >(({ className, sideOffset = 4, ...props }, ref) => (
-//   <DropdownMenuPrimitive.Portal>
-//     <DropdownMenuPrimitive.Content
-//       ref={ref}
-//       sideOffset={sideOffset}
-//       className={cn(
-//         'z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-//         className
-//       )}
-//       {...props}
-//     />
-//   </DropdownMenuPrimitive.Portal>
-// ));
-// DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName;
+const DropdownMenuContent = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
+>(({ className, sideOffset = 4, ...props }, ref) => (
+  <DropdownMenuPrimitive.Portal>
+    <DropdownMenuPrimitive.Content
+      ref={ref}
+      sideOffset={sideOffset}
+      className={cn(
+        'z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+        className
+      )}
+      {...props}
+    />
+  </DropdownMenuPrimitive.Portal>
+));
+DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName;
 
-// const DropdownMenuItem = React.forwardRef<
-//   React.ElementRef<typeof DropdownMenuPrimitive.Item>,
-//   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
-//     inset?: boolean;
-//   }
-// >(({ className, inset, ...props }, ref) => (
-//   <DropdownMenuPrimitive.Item
-//     ref={ref}
-//     className={cn(
-//       'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-//       inset && 'pl-8',
-//       className
-//     )}
-//     {...props}
-//   />
-// ));
-// DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
+const DropdownMenuItem = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
+    inset?: boolean;
+  }
+>(({ className, inset, ...props }, ref) => (
+  <DropdownMenuPrimitive.Item
+    ref={ref}
+    className={cn(
+      'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      inset && 'pl-8',
+      className
+    )}
+    {...props}
+  />
+));
+DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
 
-// const DropdownMenuCheckboxItem = React.forwardRef<
-//   React.ElementRef<typeof DropdownMenuPrimitive.CheckboxItem>,
-//   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.CheckboxItem>
-// >(({ className, children, checked, ...props }, ref) => (
-//   <DropdownMenuPrimitive.CheckboxItem
-//     ref={ref}
-//     className={cn(
-//       'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-//       className
-//     )}
-//     checked={checked}
-//     {...props}
-//   >
-//     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-//       <DropdownMenuPrimitive.ItemIndicator>
-//         <Check className="h-4 w-4" />
-//       </DropdownMenuPrimitive.ItemIndicator>
-//     </span>
-//     {children}
-//   </DropdownMenuPrimitive.CheckboxItem>
-// ));
-// DropdownMenuCheckboxItem.displayName =
-//   DropdownMenuPrimitive.CheckboxItem.displayName;
+const DropdownMenuCheckboxItem = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.CheckboxItem>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.CheckboxItem>
+>(({ className, children, checked, ...props }, ref) => (
+  <DropdownMenuPrimitive.CheckboxItem
+    ref={ref}
+    className={cn(
+      'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      className
+    )}
+    checked={checked}
+    {...props}
+  >
+    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+      <DropdownMenuPrimitive.ItemIndicator>
+        <Check className="h-4 w-4" />
+      </DropdownMenuPrimitive.ItemIndicator>
+    </span>
+    {children}
+  </DropdownMenuPrimitive.CheckboxItem>
+));
+DropdownMenuCheckboxItem.displayName =
+  DropdownMenuPrimitive.CheckboxItem.displayName;
 
-// const DropdownMenuRadioItem = React.forwardRef<
-//   React.ElementRef<typeof DropdownMenuPrimitive.RadioItem>,
-//   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem>
-// >(({ className, children, ...props }, ref) => (
-//   <DropdownMenuPrimitive.RadioItem
-//     ref={ref}
-//     className={cn(
-//       'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-//       className
-//     )}
-//     {...props}
-//   >
-//     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-//       <DropdownMenuPrimitive.ItemIndicator>
-//         <Circle className="h-2 w-2 fill-current" />
-//       </DropdownMenuPrimitive.ItemIndicator>
-//     </span>
-//     {children}
-//   </DropdownMenuPrimitive.RadioItem>
-// ));
-// DropdownMenuRadioItem.displayName = DropdownMenuPrimitive.RadioItem.displayName;
+const DropdownMenuRadioItem = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.RadioItem>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem>
+>(({ className, children, ...props }, ref) => (
+  <DropdownMenuPrimitive.RadioItem
+    ref={ref}
+    className={cn(
+      'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      className
+    )}
+    {...props}
+  >
+    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+      <DropdownMenuPrimitive.ItemIndicator>
+        <Circle className="h-2 w-2 fill-current" />
+      </DropdownMenuPrimitive.ItemIndicator>
+    </span>
+    {children}
+  </DropdownMenuPrimitive.RadioItem>
+));
+DropdownMenuRadioItem.displayName = DropdownMenuPrimitive.RadioItem.displayName;
 
-// const DropdownMenuLabel = React.forwardRef<
-//   React.ElementRef<typeof DropdownMenuPrimitive.Label>,
-//   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label> & {
-//     inset?: boolean;
-//   }
-// >(({ className, inset, ...props }, ref) => (
-//   <DropdownMenuPrimitive.Label
-//     ref={ref}
-//     className={cn(
-//       'px-2 py-1.5 text-sm font-semibold',
-//       inset && 'pl-8',
-//       className
-//     )}
-//     {...props}
-//   />
-// ));
-// DropdownMenuLabel.displayName = DropdownMenuPrimitive.Label.displayName;
+const DropdownMenuLabel = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.Label>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label> & {
+    inset?: boolean;
+  }
+>(({ className, inset, ...props }, ref) => (
+  <DropdownMenuPrimitive.Label
+    ref={ref}
+    className={cn(
+      'px-2 py-1.5 text-sm font-semibold',
+      inset && 'pl-8',
+      className
+    )}
+    {...props}
+  />
+));
+DropdownMenuLabel.displayName = DropdownMenuPrimitive.Label.displayName;
 
 const DropdownMenuSeparator = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Separator>,
@@ -4010,163 +5017,196 @@ const DropdownMenuShortcut = ({
   );
 };
 DropdownMenuShortcut.displayName = 'DropdownMenuShortcut';
-// fourm-ui========---
+  // labelVariants-----------------------------------------
 
+   
+
+ 
+
+ 
+const labelVariants = cva(
+  'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+);
+
+const Label = React.forwardRef<
+  React.ElementRef<typeof LabelPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
+    VariantProps<typeof labelVariants>
+>(({ className, ...props }, ref) => (
+  <LabelPrimitive.Root
+    ref={ref}
+    className={cn(labelVariants(), className)}
+    {...props}
+  />
+));
+Label.displayName = LabelPrimitive.Root.displayName;
+
+ 
+ 
+  // Form-----------------------------------------
+
+
+
+ 
 // const Form = FormProvider;
 
-// type FormFieldContextValue<
-//   TFieldValues extends FieldValues = FieldValues,
-//   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
-// > = {
-//   name: TName;
-// };
+type FormFieldContextValue<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> = {
+  name: TName;
+};
 
-// const FormFieldContext = React.createContext<FormFieldContextValue>(
-//   {} as FormFieldContextValue
-// );
+const FormFieldContext = React.createContext<FormFieldContextValue>(
+  {} as FormFieldContextValue
+);
 
-// const FormField = <
-//   TFieldValues extends FieldValues = FieldValues,
-//   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
-// >({
-//   ...props
-// }: ControllerProps<TFieldValues, TName>) => {
-//   return (
-//     <FormFieldContext.Provider value={{ name: props.name }}>
-//       <Controller {...props} />
-//     </FormFieldContext.Provider>
-//   );
-// };
+const FormField = <
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>({
+  ...props
+}: ControllerProps<TFieldValues, TName>) => {
+  return (
+    <FormFieldContext.Provider value={{ name: props.name }}>
+      <Controller {...props} />
+    </FormFieldContext.Provider>
+  );
+};
 
-// const useFormField = () => {
-//   const fieldContext = React.useContext(FormFieldContext);
-//   const itemContext = React.useContext(FormItemContext);
-//   const { getFieldState, formState } = useFormContext();
+const useFormField = () => {
+  const fieldContext = React.useContext(FormFieldContext);
+  const itemContext = React.useContext(FormItemContext);
+  const { getFieldState, formState } = useFormContext();
 
-//   const fieldState = getFieldState(fieldContext.name, formState);
+  const fieldState = getFieldState(fieldContext.name, formState);
 
-//   if (!fieldContext) {
-//     throw new Error('useFormField should be used within <FormField>');
-//   }
+  if (!fieldContext) {
+    throw new Error('useFormField should be used within <FormField>');
+  }
 
-//   const { id } = itemContext;
+  const { id } = itemContext;
 
-//   return {
-//     id,
-//     name: fieldContext.name,
-//     formItemId: `${id}-form-item`,
-//     formDescriptionId: `${id}-form-item-description`,
-//     formMessageId: `${id}-form-item-message`,
-//     ...fieldState,
-//   };
-// };
+  return {
+    id,
+    name: fieldContext.name,
+    formItemId: `${id}-form-item`,
+    formDescriptionId: `${id}-form-item-description`,
+    formMessageId: `${id}-form-item-message`,
+    ...fieldState,
+  };
+};
 
-// type FormItemContextValue = {
-//   id: string;
-// };
+type FormItemContextValue = {
+  id: string;
+};
 
-// const FormItemContext = React.createContext<FormItemContextValue>(
-//   {} as FormItemContextValue
-// );
+const FormItemContext = React.createContext<FormItemContextValue>(
+  {} as FormItemContextValue
+);
 
-// const FormItem = React.forwardRef<
-//   HTMLDivElement,
-//   React.HTMLAttributes<HTMLDivElement>
-// >(({ className, ...props }, ref) => {
-//   const id = React.useId();
+const FormItem = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => {
+  const id = React.useId();
 
-//   return (
-//     <FormItemContext.Provider value={{ id }}>
-//       <div ref={ref} className={cn('space-y-2', className)} {...props} />
-//     </FormItemContext.Provider>
-//   );
-// });
-// FormItem.displayName = 'FormItem';
+  return (
+    <FormItemContext.Provider value={{ id }}>
+      <div ref={ref} className={cn('space-y-2', className)} {...props} />
+    </FormItemContext.Provider>
+  );
+});
+FormItem.displayName = 'FormItem';
 
-// const FormLabel = React.forwardRef<
-//   React.ElementRef<typeof LabelPrimitive.Root>,
-//   React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
-// >(({ className, ...props }, ref) => {
-//   const { error, formItemId } = useFormField();
+const FormLabel = React.forwardRef<
+  React.ElementRef<typeof LabelPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
+>(({ className, ...props }, ref) => {
+  const { error, formItemId } = useFormField();
 
-//   return (
-//     <Label
-//       ref={ref}
-//       className={cn(error && 'text-destructive', className)}
-//       htmlFor={formItemId}
-//       {...props}
-//     />
-//   );
-// });
-// FormLabel.displayName = 'FormLabel';
+  return (
+    <Label
+      ref={ref}
+      className={cn(error && 'text-destructive', className)}
+      htmlFor={formItemId}
+      {...props}
+    />
+  );
+});
+FormLabel.displayName = 'FormLabel';
 
-// const FormControl = React.forwardRef<
-//   React.ElementRef<typeof Slot>,
-//   React.ComponentPropsWithoutRef<typeof Slot>
-// >(({ ...props }, ref) => {
-//   const { error, formItemId, formDescriptionId, formMessageId } =
-//     useFormField();
+const FormControl = React.forwardRef<
+  React.ElementRef<typeof Slot>,
+  React.ComponentPropsWithoutRef<typeof Slot>
+>(({ ...props }, ref) => {
+  const { error, formItemId, formDescriptionId, formMessageId } =
+    useFormField();
 
-//   return (
-//     <Slot
-//       ref={ref}
-//       id={formItemId}
-//       aria-describedby={
-//         !error
-//           ? `${formDescriptionId}`
-//           : `${formDescriptionId} ${formMessageId}`
-//       }
-//       aria-invalid={!!error}
-//       {...props}
-//     />
-//   );
-// });
-// FormControl.displayName = 'FormControl';
+  return (
+    <Slot
+      ref={ref}
+      id={formItemId}
+      aria-describedby={
+        !error
+          ? `${formDescriptionId}`
+          : `${formDescriptionId} ${formMessageId}`
+      }
+      aria-invalid={!!error}
+      {...props}
+    />
+  );
+});
+FormControl.displayName = 'FormControl';
 
-// const FormDescription = React.forwardRef<
-//   HTMLParagraphElement,
-//   React.HTMLAttributes<HTMLParagraphElement>
-// >(({ className, ...props }, ref) => {
-//   const { formDescriptionId } = useFormField();
+const FormDescription = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => {
+  const { formDescriptionId } = useFormField();
 
-//   return (
-//     <p
-//       ref={ref}
-//       id={formDescriptionId}
-//       className={cn('text-sm text-muted-foreground', className)}
-//       {...props}
-//     />
-//   );
-// });
-// FormDescription.displayName = 'FormDescription';
+  return (
+    <p
+      ref={ref}
+      id={formDescriptionId}
+      className={cn('text-sm text-muted-foreground', className)}
+      {...props}
+    />
+  );
+});
+FormDescription.displayName = 'FormDescription';
 
-// const FormMessage = React.forwardRef<
-//   HTMLParagraphElement,
-//   React.HTMLAttributes<HTMLParagraphElement>
-// >(({ className, children, ...props }, ref) => {
-//   const { error, formMessageId } = useFormField();
-//   const body = error ? String(error?.message) : children;
+const FormMessage = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, children, ...props }, ref) => {
+  const { error, formMessageId } = useFormField();
+  const body = error ? String(error?.message) : children;
 
-//   if (!body) {
-//     return null;
-//   }
+  if (!body) {
+    return null;
+  }
 
-//   return (
-//     <p
-//       ref={ref}
-//       id={formMessageId}
-//       className={cn('text-sm font-medium text-destructive', className)}
-//       {...props}
-//     >
-//       {body}
-//     </p>
-//   );
-// });
-// FormMessage.displayName = 'FormMessage';
+  return (
+    <p
+      ref={ref}
+      id={formMessageId}
+      className={cn('text-sm font-medium text-destructive', className)}
+      {...props}
+    >
+      {body}
+    </p>
+  );
+});
+FormMessage.displayName = 'FormMessage';
+ 
+  // HoverCardPrimitive-----------------------------------------
 
-const HoverCard = HoverCardPrimitive.Root;
+ 
+ 
+// const HoverCard = HoverCardPrimitive.Root;
 
-const HoverCardTrigger = HoverCardPrimitive.Trigger;
+// const HoverCardTrigger = HoverCardPrimitive.Trigger;
 
 const HoverCardContent = React.forwardRef<
   React.ElementRef<typeof HoverCardPrimitive.Content>,
@@ -4184,6 +5224,13 @@ const HoverCardContent = React.forwardRef<
   />
 ));
 HoverCardContent.displayName = HoverCardPrimitive.Content.displayName;
+
+ 
+ 
+  // OTPInputContext-----------------------------------------
+
+ 
+ 
 const InputOTP = React.forwardRef<
   React.ElementRef<typeof OTPInput>,
   React.ComponentPropsWithoutRef<typeof OTPInput>
@@ -4234,8 +5281,6 @@ const InputOTPSlot = React.forwardRef<
     </div>
   );
 });
-
-// input-------------------------------
 InputOTPSlot.displayName = 'InputOTPSlot';
 
 const InputOTPSeparator = React.forwardRef<
@@ -4250,48 +5295,78 @@ InputOTPSeparator.displayName = 'InputOTPSeparator';
 
   type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
-// const Input = React.forwardRef<HTMLInputElement, InputProps>(
-//   ({ className, type, ...props }, ref) => {
-//     return (
-//       <input
-//         type={type}
-//         className={cn(
-//           'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-//           className
-//         )}
-//         ref={ref}
-//         {...props}
-//       />
-//     );
-//   }
-// );
-// Input.displayName = 'Input';
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, ...props }, ref) => {
+    return (
+      <input
+        type={type}
+        className={cn(
+          'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+          className
+        )}
+        ref={ref}
+        {...props}
+      />
+    );
+  }
+);
+Input.displayName = 'Input';
 
-// const labelVariants = cva(
-//   'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
-// );
 
-// const Label = React.forwardRef<
-//   React.ElementRef<typeof LabelPrimitive.Root>,
-//   React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
-//     VariantProps<typeof labelVariants>
-// >(({ className, ...props }, ref) => (
-//   <LabelPrimitive.Root
-//     ref={ref}
-//     className={cn(labelVariants(), className)}
-//     {...props}
-//   />
-// ));
-// Label.displayName = LabelPrimitive.Root.displayName;
-const MenubarMenu = MenubarPrimitive.Menu;
+  // ResizableHandle-----------------------------------------
 
-const MenubarGroup = MenubarPrimitive.Group;
 
-const MenubarPortal = MenubarPrimitive.Portal;
+ 
+const ResizablePanelGroup = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof ResizablePrimitive.PanelGroup>) => (
+  <ResizablePrimitive.PanelGroup
+    className={cn(
+      'flex h-full w-full data-[panel-group-direction=vertical]:flex-col',
+      className
+    )}
+    {...props}
+  />
+);
 
-const MenubarSub = MenubarPrimitive.Sub;
+// const ResizablePanel = ResizablePrimitive.Panel;
 
-const MenubarRadioGroup = MenubarPrimitive.RadioGroup;
+const ResizableHandle = ({
+  withHandle,
+  className,
+  ...props
+}: React.ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> & {
+  withHandle?: boolean;
+}) => (
+  <ResizablePrimitive.PanelResizeHandle
+    className={cn(
+      'relative flex w-px items-center justify-center bg-border after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:-translate-y-1/2 data-[panel-group-direction=vertical]:after:translate-x-0 [&[data-panel-group-direction=vertical]>div]:rotate-90',
+      className
+    )}
+    {...props}
+  >
+    {withHandle && (
+      <div className="z-10 flex h-4 w-3 items-center justify-center rounded-sm border bg-border">
+        <GripVertical className="h-2.5 w-2.5" />
+      </div>
+    )}
+  </ResizablePrimitive.PanelResizeHandle>
+);
+
+   // MenubarPrimitive-----------------------------------------
+
+  
+ 
+// const MenubarMenu = MenubarPrimitive.Menu;
+
+// const MenubarGroup = MenubarPrimitive.Group;
+
+// const MenubarPortal = MenubarPrimitive.Portal;
+
+// const MenubarSub = MenubarPrimitive.Sub;
+
+// const MenubarRadioGroup = MenubarPrimitive.RadioGroup;
 
 const Menubar = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.Root>,
@@ -4492,553 +5567,16 @@ const MenubarShortcut = ({
   );
 };
 MenubarShortcut.displayname = 'MenubarShortcut';
-// navigation-menu----------------------------------
- 
-
-const NavigationMenu = React.forwardRef<
-  React.ElementRef<typeof NavigationMenuPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Root>
->(({ className, children, ...props }, ref) => (
-  <NavigationMenuPrimitive.Root
-    ref={ref}
-    className={cn(
-      'relative z-10 flex max-w-max flex-1 items-center justify-center',
-      className
-    )}
-    {...props}
-  >
-    {children}
-    <NavigationMenuViewport />
-  </NavigationMenuPrimitive.Root>
-));
-NavigationMenu.displayName = NavigationMenuPrimitive.Root.displayName;
-
-const NavigationMenuList = React.forwardRef<
-  React.ElementRef<typeof NavigationMenuPrimitive.List>,
-  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.List>
->(({ className, ...props }, ref) => (
-  <NavigationMenuPrimitive.List
-    ref={ref}
-    className={cn(
-      'group flex flex-1 list-none items-center justify-center space-x-1',
-      className
-    )}
-    {...props}
-  />
-));
-NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName;
-
-// const NavigationMenuItem = NavigationMenuPrimitive.Item;
-
-const navigationMenuTriggerStyle = cva(
-  'group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50'
-);
-
-const NavigationMenuTrigger = React.forwardRef<
-  React.ElementRef<typeof NavigationMenuPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
-  <NavigationMenuPrimitive.Trigger
-    ref={ref}
-    className={cn(navigationMenuTriggerStyle(), 'group', className)}
-    {...props}
-  >
-    {children}{' '}
-    <ChevronDown
-      className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180"
-      aria-hidden="true"
-    />
-  </NavigationMenuPrimitive.Trigger>
-));
-NavigationMenuTrigger.displayName = NavigationMenuPrimitive.Trigger.displayName;
-
-const NavigationMenuContent = React.forwardRef<
-  React.ElementRef<typeof NavigationMenuPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Content>
->(({ className, ...props }, ref) => (
-  <NavigationMenuPrimitive.Content
-    ref={ref}
-    className={cn(
-      'left-0 top-0 w-full data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 md:absolute md:w-auto ',
-      className
-    )}
-    {...props}
-  />
-));
-NavigationMenuContent.displayName = NavigationMenuPrimitive.Content.displayName;
-
-// const NavigationMenuLink = NavigationMenuPrimitive.Link;
-
-const NavigationMenuViewport = React.forwardRef<
-  React.ElementRef<typeof NavigationMenuPrimitive.Viewport>,
-  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Viewport>
->(({ className, ...props }, ref) => (
-  <div className={cn('absolute left-0 top-full flex justify-center')}>
-    <NavigationMenuPrimitive.Viewport
-      className={cn(
-        'origin-top-center relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]',
-        className
-      )}
-      ref={ref}
-      {...props}
-    />
-  </div>
-));
-NavigationMenuViewport.displayName =
-  NavigationMenuPrimitive.Viewport.displayName;
-
-const NavigationMenuIndicator = React.forwardRef<
-  React.ElementRef<typeof NavigationMenuPrimitive.Indicator>,
-  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Indicator>
->(({ className, ...props }, ref) => (
-  <NavigationMenuPrimitive.Indicator
-    ref={ref}
-    className={cn(
-      'top-full z-[1] flex h-1.5 items-end justify-center overflow-hidden data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in',
-      className
-    )}
-    {...props}
-  >
-    <div className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-border shadow-md" />
-  </NavigationMenuPrimitive.Indicator>
-));
-NavigationMenuIndicator.displayName =
-  NavigationMenuPrimitive.Indicator.displayName;
-// pagination-ui==========================================
-  const Pagination = ({ className, ...props }: React.ComponentProps<'nav'>) => (
-    <nav
-      role="navigation"
-      aria-label="pagination"
-      className={cn('mx-auto flex w-full justify-center', className)}
-      {...props}
-    />
-  );
-  Pagination.displayName = 'Pagination';
-  
-  const PaginationContent = React.forwardRef<
-    HTMLUListElement,
-    React.ComponentProps<'ul'>
-  >(({ className, ...props }, ref) => (
-    <ul
-      ref={ref}
-      className={cn('flex flex-row items-center gap-1', className)}
-      {...props}
-    />
-  ));
-  PaginationContent.displayName = 'PaginationContent';
-  
-  const PaginationItem = React.forwardRef<
-    HTMLLIElement,
-    React.ComponentProps<'li'>
-  >(({ className, ...props }, ref) => (
-    <li ref={ref} className={cn('', className)} {...props} />
-  ));
-  PaginationItem.displayName = 'PaginationItem';
-  
-  type PaginationLinkProps = {
-    isActive?: boolean;
-  } & Pick<ButtonProps, 'size'> &
-    React.ComponentProps<'a'>;
-  
-  const PaginationLink = ({
-    className,
-    isActive,
-    size = 'icon',
-    ...props
-  }: PaginationLinkProps) => (
-    <a
-      aria-current={isActive ? 'page' : undefined}
-      className={cn(
-        buttonVariants({
-          variant: isActive ? 'outline' : 'ghost',
-          size,
-        }),
-        className
-      )}
-      {...props}
-    />
-  );
-  PaginationLink.displayName = 'PaginationLink';
-  
-  const PaginationPrevious = ({
-    className,
-    ...props
-  }: React.ComponentProps<typeof PaginationLink>) => (
-    <PaginationLink
-      aria-label="Go to previous page"
-      size="default"
-      className={cn('gap-1 pl-2.5', className)}
-      {...props}
-    >
-      <ChevronLeft className="h-4 w-4" />
-      <span>Previous</span>
-    </PaginationLink>
-  );
-  PaginationPrevious.displayName = 'PaginationPrevious';
-  
-  const PaginationNext = ({
-    className,
-    ...props
-  }: React.ComponentProps<typeof PaginationLink>) => (
-    <PaginationLink
-      aria-label="Go to next page"
-      size="default"
-      className={cn('gap-1 pr-2.5', className)}
-      {...props}
-    >
-      <span>Next</span>
-      <ChevronRight className="h-4 w-4" />
-    </PaginationLink>
-  );
-  PaginationNext.displayName = 'PaginationNext';
-  
-  const PaginationEllipsis = ({
-    className,
-    ...props
-  }: React.ComponentProps<'span'>) => (
-    <span
-      aria-hidden
-      className={cn('flex h-9 w-9 items-center justify-center', className)}
-      {...props}
-    >
-      <MoreHorizontal className="h-4 w-4" />
-      <span className="sr-only">More pages</span>
-    </span>
-  );
-  PaginationEllipsis.displayName = 'PaginationEllipsis';
-
- 
-// const Popover = PopoverPrimitive.Root;
-
-// const PopoverTrigger = PopoverPrimitive.Trigger;
-
-// const PopoverContent = React.forwardRef<
-//   React.ElementRef<typeof PopoverPrimitive.Content>,
-//   React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
-// >(({ className, align = 'center', sideOffset = 4, ...props }, ref) => (
-//   <PopoverPrimitive.Portal>
-//     <PopoverPrimitive.Content
-//       ref={ref}
-//       align={align}
-//       sideOffset={sideOffset}
-//       className={cn(
-//         'z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-//         className
-//       )}
-//       {...props}
-//     />
-//   </PopoverPrimitive.Portal>
-// ));
-// PopoverContent.displayName = PopoverPrimitive.Content.displayName;
-
- 
-const Progress = React.forwardRef<
-  React.ElementRef<typeof ProgressPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
->(({ className, value, ...props }, ref) => (
-  <ProgressPrimitive.Root
-    ref={ref}
-    className={cn(
-      'relative h-4 w-full overflow-hidden rounded-full bg-secondary',
-      className
-    )}
-    {...props}
-  >
-    <ProgressPrimitive.Indicator
-      className="h-full w-full flex-1 bg-primary transition-all"
-      style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
-    />
-  </ProgressPrimitive.Root>
-));
-Progress.displayName = ProgressPrimitive.Root.displayName;
+  // NavigationMenu-----------------------------------------
 
  
  
-const RadioGroup = React.forwardRef<
-  React.ElementRef<typeof RadioGroupPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>
->(({ className, ...props }, ref) => {
-  return (
-    <RadioGroupPrimitive.Root
-      className={cn('grid gap-2', className)}
-      {...props}
-      ref={ref}
-    />
-  );
-});
-RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
-
-const RadioGroupItem = React.forwardRef<
-  React.ElementRef<typeof RadioGroupPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>
->(({ className, ...props }, ref) => {
-  return (
-    <RadioGroupPrimitive.Item
-      ref={ref}
-      className={cn(
-        'aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-        className
-      )}
-      {...props}
-    >
-      <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
-        <Circle className="h-2.5 w-2.5 fill-current text-current" />
-      </RadioGroupPrimitive.Indicator>
-    </RadioGroupPrimitive.Item>
-  );
-});
-RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
-
  
-const ResizablePanelGroup = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof ResizablePrimitive.PanelGroup>) => (
-  <ResizablePrimitive.PanelGroup
-    className={cn(
-      'flex h-full w-full data-[panel-group-direction=vertical]:flex-col',
-      className
-    )}
-    {...props}
-  />
-);
+// const Sheet = SheetPrimitive.Root;
 
-// const ResizablePanel = ResizablePrimitive.Panel;
+// const SheetTrigger = SheetPrimitive.Trigger;
 
-const ResizableHandle = ({
-  withHandle,
-  className,
-  ...props
-}: React.ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> & {
-  withHandle?: boolean;
-}) => (
-  <ResizablePrimitive.PanelResizeHandle
-    className={cn(
-      'relative flex w-px items-center justify-center bg-border after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:-translate-y-1/2 data-[panel-group-direction=vertical]:after:translate-x-0 [&[data-panel-group-direction=vertical]>div]:rotate-90',
-      className
-    )}
-    {...props}
-  >
-    {withHandle && (
-      <div className="z-10 flex h-4 w-3 items-center justify-center rounded-sm border bg-border">
-        <GripVertical className="h-2.5 w-2.5" />
-      </div>
-    )}
-  </ResizablePrimitive.PanelResizeHandle>
-);
-
- 
-const ScrollArea = React.forwardRef<
-  React.ElementRef<typeof ScrollAreaPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
->(({ className, children, ...props }, ref) => (
-  <ScrollAreaPrimitive.Root
-    ref={ref}
-    className={cn('relative overflow-hidden', className)}
-    {...props}
-  >
-    <ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit]">
-      {children}
-    </ScrollAreaPrimitive.Viewport>
-    <ScrollBar />
-    <ScrollAreaPrimitive.Corner />
-  </ScrollAreaPrimitive.Root>
-));
-ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName;
-
-const ScrollBar = React.forwardRef<
-  React.ElementRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>,
-  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>
->(({ className, orientation = 'vertical', ...props }, ref) => (
-  <ScrollAreaPrimitive.ScrollAreaScrollbar
-    ref={ref}
-    orientation={orientation}
-    className={cn(
-      'flex touch-none select-none transition-colors',
-      orientation === 'vertical' &&
-        'h-full w-2.5 border-l border-l-transparent p-[1px]',
-      orientation === 'horizontal' &&
-        'h-2.5 flex-col border-t border-t-transparent p-[1px]',
-      className
-    )}
-    {...props}
-  >
-    <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-border" />
-  </ScrollAreaPrimitive.ScrollAreaScrollbar>
-));
-ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName;
-// ====
-
-// const Select = SelectPrimitive.Root;
-
-// const SelectGroup = SelectPrimitive.Group;
-
-// const SelectValue = SelectPrimitive.Value;
-
-// const SelectTrigger = React.forwardRef<
-//   React.ElementRef<typeof SelectPrimitive.Trigger>,
-//   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
-// >(({ className, children, ...props }, ref) => (
-//   <SelectPrimitive.Trigger
-//     ref={ref}
-//     className={cn(
-//       'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
-//       className
-//     )}
-//     {...props}
-//   >
-//     {children}
-//     <SelectPrimitive.Icon asChild>
-//       <ChevronDown className="h-4 w-4 opacity-50" />
-//     </SelectPrimitive.Icon>
-//   </SelectPrimitive.Trigger>
-// ));
-// SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
-
-// const SelectScrollUpButton = React.forwardRef<
-//   React.ElementRef<typeof SelectPrimitive.ScrollUpButton>,
-//   React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>
-// >(({ className, ...props }, ref) => (
-//   <SelectPrimitive.ScrollUpButton
-//     ref={ref}
-//     className={cn(
-//       'flex cursor-default items-center justify-center py-1',
-//       className
-//     )}
-//     {...props}
-//   >
-//     <ChevronUp className="h-4 w-4" />
-//   </SelectPrimitive.ScrollUpButton>
-// ));
-// SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
-
-// const SelectScrollDownButton = React.forwardRef<
-//   React.ElementRef<typeof SelectPrimitive.ScrollDownButton>,
-//   React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>
-// >(({ className, ...props }, ref) => (
-//   <SelectPrimitive.ScrollDownButton
-//     ref={ref}
-//     className={cn(
-//       'flex cursor-default items-center justify-center py-1',
-//       className
-//     )}
-//     {...props}
-//   >
-//     <ChevronDown className="h-4 w-4" />
-//   </SelectPrimitive.ScrollDownButton>
-// ));
-// SelectScrollDownButton.displayName =
-//   SelectPrimitive.ScrollDownButton.displayName;
-
-// const SelectContent = React.forwardRef<
-//   React.ElementRef<typeof SelectPrimitive.Content>,
-//   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
-// >(({ className, children, position = 'popper', ...props }, ref) => (
-//   <SelectPrimitive.Portal>
-//     <SelectPrimitive.Content
-//       ref={ref}
-//       className={cn(
-//         'relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-//         position === 'popper' &&
-//           'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
-//         className
-//       )}
-//       position={position}
-//       {...props}
-//     >
-//       <SelectScrollUpButton />
-//       <SelectPrimitive.Viewport
-//         className={cn(
-//           'p-1',
-//           position === 'popper' &&
-//             'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]'
-//         )}
-//       >
-//         {children}
-//       </SelectPrimitive.Viewport>
-//       <SelectScrollDownButton />
-//     </SelectPrimitive.Content>
-//   </SelectPrimitive.Portal>
-// ));
-// SelectContent.displayName = SelectPrimitive.Content.displayName;
-
-const SelectLabel = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Label>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
->(({ className, ...props }, ref) => (
-  <SelectPrimitive.Label
-    ref={ref}
-    className={cn('py-1.5 pl-8 pr-2 text-sm font-semibold', className)}
-    {...props}
-  />
-));
-SelectLabel.displayName = SelectPrimitive.Label.displayName;
-
-// const SelectItem = React.forwardRef<
-//   React.ElementRef<typeof SelectPrimitive.Item>,
-//   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
-// >(({ className, children, ...props }, ref) => (
-//   <SelectPrimitive.Item
-//     ref={ref}
-//     className={cn(
-//       'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-//       className
-//     )}
-//     {...props}
-//   >
-//     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-//       <SelectPrimitive.ItemIndicator>
-//         <Check className="h-4 w-4" />
-//       </SelectPrimitive.ItemIndicator>
-//     </span>
-
-//     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
-//   </SelectPrimitive.Item>
-// ));
-// SelectItem.displayName = SelectPrimitive.Item.displayName;
-
-// const SelectSeparator = React.forwardRef<
-//   React.ElementRef<typeof SelectPrimitive.Separator>,
-//   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
-// >(({ className, ...props }, ref) => (
-//   <SelectPrimitive.Separator
-//     ref={ref}
-//     className={cn('-mx-1 my-1 h-px bg-muted', className)}
-//     {...props}
-//   />
-// ));
-// SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
-
-// const Separator = React.forwardRef<
-//   React.ElementRef<typeof SeparatorPrimitive.Root>,
-//   React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>
-// >(
-//   (
-//     { className, orientation = 'horizontal', decorative = true, ...props },
-//     ref
-//   ) => (
-//     <SeparatorPrimitive.Root
-//       ref={ref}
-//       decorative={decorative}
-//       orientation={orientation}
-//       className={cn(
-//         'shrink-0 bg-border',
-//         orientation === 'horizontal' ? 'h-[1px] w-full' : 'h-full w-[1px]',
-//         className
-//       )}
-//       {...props}
-//     />
-//   )
-// );
-// Separator.displayName = SeparatorPrimitive.Root.displayName;
- 
- 
-
-const Sheet = SheetPrimitive.Root;
-
-const SheetTrigger = SheetPrimitive.Trigger;
-
-const SheetClose = SheetPrimitive.Close;
+// const SheetClose = SheetPrimitive.Close;
 
 const SheetPortal = SheetPrimitive.Portal;
 
@@ -5152,1537 +5690,395 @@ const SheetDescription = React.forwardRef<
   />
 ));
 SheetDescription.displayName = SheetPrimitive.Description.displayName;
-function Skeleton({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn('animate-pulse rounded-md bg-muted', className)}
-      {...props}
-    />
-  );
-}
- 
 
- 
-const Slider = React.forwardRef<
-  React.ElementRef<typeof SliderPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>
->(({ className, ...props }, ref) => (
-  <SliderPrimitive.Root
+
+  // NavigationMenu-----------------------------------------
+  
+const NavigationMenu = React.forwardRef<
+  React.ElementRef<typeof NavigationMenuPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Root>
+>(({ className, children, ...props }, ref) => (
+  <NavigationMenuPrimitive.Root
     ref={ref}
     className={cn(
-      'relative flex w-full touch-none select-none items-center',
+      'relative z-10 flex max-w-max flex-1 items-center justify-center',
       className
     )}
     {...props}
   >
-    <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary">
-      <SliderPrimitive.Range className="absolute h-full bg-primary" />
-    </SliderPrimitive.Track>
-    <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50" />
-  </SliderPrimitive.Root>
+    {children}
+    <NavigationMenuViewport />
+  </NavigationMenuPrimitive.Root>
 ));
-Slider.displayName = SliderPrimitive.Root.displayName;
+NavigationMenu.displayName = NavigationMenuPrimitive.Root.displayName;
 
-
-type ToasterProps = React.ComponentProps<typeof Sonner>;
-
-const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = 'system' } = useTheme();
-
-  return (
-    <Sonner
-      theme={theme as ToasterProps['theme']}
-      className="toaster group"
-      toastOptions={{
-        classNames: {
-          toast:
-            'group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg',
-          description: 'group-[.toast]:text-muted-foreground',
-          actionButton:
-            'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground',
-          cancelButton:
-            'group-[.toast]:bg-muted group-[.toast]:text-muted-foreground',
-        },
-      }}
-      {...props}
-    />
-  );
-};
-
-const Switch = React.forwardRef<
-  React.ElementRef<typeof SwitchPrimitives.Root>,
-  React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>
+const NavigationMenuList = React.forwardRef<
+  React.ElementRef<typeof NavigationMenuPrimitive.List>,
+  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.List>
 >(({ className, ...props }, ref) => (
-  <SwitchPrimitives.Root
+  <NavigationMenuPrimitive.List
+    ref={ref}
     className={cn(
-      'peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input',
+      'group flex flex-1 list-none items-center justify-center space-x-1',
       className
     )}
     {...props}
+  />
+));
+NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName;
+
+// const NavigationMenuItem = NavigationMenuPrimitive.Item;
+
+const navigationMenuTriggerStyle = cva(
+  'group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50'
+);
+
+const NavigationMenuTrigger = React.forwardRef<
+  React.ElementRef<typeof NavigationMenuPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Trigger>
+>(({ className, children, ...props }, ref) => (
+  <NavigationMenuPrimitive.Trigger
     ref={ref}
+    className={cn(navigationMenuTriggerStyle(), 'group', className)}
+    {...props}
   >
-    <SwitchPrimitives.Thumb
+    {children}{' '}
+    <ChevronDown
+      className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180"
+      aria-hidden="true"
+    />
+  </NavigationMenuPrimitive.Trigger>
+));
+NavigationMenuTrigger.displayName = NavigationMenuPrimitive.Trigger.displayName;
+
+const NavigationMenuContent = React.forwardRef<
+  React.ElementRef<typeof NavigationMenuPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Content>
+>(({ className, ...props }, ref) => (
+  <NavigationMenuPrimitive.Content
+    ref={ref}
+    className={cn(
+      'left-0 top-0 w-full data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 md:absolute md:w-auto ',
+      className
+    )}
+    {...props}
+  />
+));
+NavigationMenuContent.displayName = NavigationMenuPrimitive.Content.displayName;
+
+// const NavigationMenuLink = NavigationMenuPrimitive.Link;
+
+const NavigationMenuViewport = React.forwardRef<
+  React.ElementRef<typeof NavigationMenuPrimitive.Viewport>,
+  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Viewport>
+>(({ className, ...props }, ref) => (
+  <div className={cn('absolute left-0 top-full flex justify-center')}>
+    <NavigationMenuPrimitive.Viewport
       className={cn(
-        'pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0'
+        'origin-top-center relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]',
+        className
       )}
-    />
-  </SwitchPrimitives.Root>
-));
-Switch.displayName = SwitchPrimitives.Root.displayName;
- 
-const Table = React.forwardRef<
-  HTMLTableElement,
-  React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
-    <table
       ref={ref}
-      className={cn('w-full caption-bottom text-sm', className)}
       {...props}
     />
   </div>
 ));
-Table.displayName = 'Table';
+NavigationMenuViewport.displayName =
+  NavigationMenuPrimitive.Viewport.displayName;
 
-const TableHeader = React.forwardRef<
-  HTMLTableSectionElement,
-  React.HTMLAttributes<HTMLTableSectionElement>
+const NavigationMenuIndicator = React.forwardRef<
+  React.ElementRef<typeof NavigationMenuPrimitive.Indicator>,
+  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Indicator>
 >(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn('[&_tr]:border-b', className)} {...props} />
-));
-TableHeader.displayName = 'TableHeader';
-
-const TableBody = React.forwardRef<
-  HTMLTableSectionElement,
-  React.HTMLAttributes<HTMLTableSectionElement>
->(({ className, ...props }, ref) => (
-  <tbody
-    ref={ref}
-    className={cn('[&_tr:last-child]:border-0', className)}
-    {...props}
-  />
-));
-TableBody.displayName = 'TableBody';
-
-const TableFooter = React.forwardRef<
-  HTMLTableSectionElement,
-  React.HTMLAttributes<HTMLTableSectionElement>
->(({ className, ...props }, ref) => (
-  <tfoot
+  <NavigationMenuPrimitive.Indicator
     ref={ref}
     className={cn(
-      'border-t bg-muted/50 font-medium [&>tr]:last:border-b-0',
+      'top-full z-[1] flex h-1.5 items-end justify-center overflow-hidden data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in',
       className
     )}
-    {...props}
-  />
-));
-TableFooter.displayName = 'TableFooter';
-
-const TableRow = React.forwardRef<
-  HTMLTableRowElement,
-  React.HTMLAttributes<HTMLTableRowElement>
->(({ className, ...props }, ref) => (
-  <tr
-    ref={ref}
-    className={cn(
-      'border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted',
-      className
-    )}
-    {...props}
-  />
-));
-TableRow.displayName = 'TableRow';
-
-const TableHead = React.forwardRef<
-  HTMLTableCellElement,
-  React.ThHTMLAttributes<HTMLTableCellElement>
->(({ className, ...props }, ref) => (
-  <th
-    ref={ref}
-    className={cn(
-      'h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0',
-      className
-    )}
-    {...props}
-  />
-));
-TableHead.displayName = 'TableHead';
-
-const TableCell = React.forwardRef<
-  HTMLTableCellElement,
-  React.TdHTMLAttributes<HTMLTableCellElement>
->(({ className, ...props }, ref) => (
-  <td
-    ref={ref}
-    className={cn('p-4 align-middle [&:has([role=checkbox])]:pr-0', className)}
-    {...props}
-  />
-));
-TableCell.displayName = 'TableCell';
-
-const TableCaption = React.forwardRef<
-  HTMLTableCaptionElement,
-  React.HTMLAttributes<HTMLTableCaptionElement>
->(({ className, ...props }, ref) => (
-  <caption
-    ref={ref}
-    className={cn('mt-4 text-sm text-muted-foreground', className)}
-    {...props}
-  />
-));
-TableCaption.displayName = 'TableCaption';
-
-//  const Tabs = TabsPrimitive.Root;
-
-// const TabsList = React.forwardRef<
-//   React.ElementRef<typeof TabsPrimitive.List>,
-//   React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
-// >(({ className, ...props }, ref) => (
-//   <TabsPrimitive.List
-//     ref={ref}
-//     className={cn(
-//       'inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground',
-//       className
-//     )}
-//     {...props}
-//   />
-// ));
-// TabsList.displayName = TabsPrimitive.List.displayName;
-
-// const TabsTrigger = React.forwardRef<
-//   React.ElementRef<typeof TabsPrimitive.Trigger>,
-//   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
-// >(({ className, ...props }, ref) => (
-//   <TabsPrimitive.Trigger
-//     ref={ref}
-//     className={cn(
-//       'inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
-//       className
-//     )}
-//     {...props}
-//   />
-// ));
-// TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
-
-// const TabsContent = React.forwardRef<
-//   React.ElementRef<typeof TabsPrimitive.Content>,
-//   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
-// >(({ className, ...props }, ref) => (
-//   <TabsPrimitive.Content
-//     ref={ref}
-//     className={cn(
-//       'mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-//       className
-//     )}
-//     {...props}
-//   />
-// ));
-// TabsContent.displayName = TabsPrimitive.Content.displayName;
-// const Textarea = React.forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement>>(
-//   ({ className, ...props }, ref) => {
-//     return (
-//       <textarea
-//         className={cn(
-//           'flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-//           className
-//         )}
-//         ref={ref}
-//         {...props}
-//       />
-//     );
-//   }
-// );
-// Textarea.displayName = 'Textarea';
- 
-  
- 
-// const ToastProvider = ToastPrimitives.Provider;
-
-// const ToastViewport = React.forwardRef<
-//   React.ElementRef<typeof ToastPrimitives.Viewport>,
-//   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Viewport>
-// >(({ className, ...props }, ref) => (
-//   <ToastPrimitives.Viewport
-//     ref={ref}
-//     className={cn(
-//       'fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]',
-//       className
-//     )}
-//     {...props}
-//   />
-// ));
-// ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
-
-// const toastVariants = cva(
-//   'group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full',
-//   {
-//     variants: {
-//       variant: {
-//         default: 'border bg-background text-foreground',
-//         destructive:
-//           'destructive group border-destructive bg-destructive text-destructive-foreground',
-//       },
-//     },
-//     defaultVariants: {
-//       variant: 'default',
-//     },
-//   }
-// );
-
-// const Toast = React.forwardRef<
-//   React.ElementRef<typeof ToastPrimitives.Root>,
-//   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
-//     VariantProps<typeof toastVariants>
-// >(({ className, variant, ...props }, ref) => {
-//   return (
-//     <ToastPrimitives.Root
-//       ref={ref}
-//       className={cn(toastVariants({ variant }), className)}
-//       {...props}
-//     />
-//   );
-// });
-// Toast.displayName = ToastPrimitives.Root.displayName;
-
-// const ToastAction = React.forwardRef<
-//   React.ElementRef<typeof ToastPrimitives.Action>,
-//   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Action>
-// >(({ className, ...props }, ref) => (
-//   <ToastPrimitives.Action
-//     ref={ref}
-//     className={cn(
-//       'inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-muted/40 group-[.destructive]:hover:border-destructive/30 group-[.destructive]:hover:bg-destructive group-[.destructive]:hover:text-destructive-foreground group-[.destructive]:focus:ring-destructive',
-//       className
-//     )}
-//     {...props}
-//   />
-// ));
-// ToastAction.displayName = ToastPrimitives.Action.displayName;
-
-const ToastClose = React.forwardRef<
-  React.ElementRef<typeof ToastPrimitives.Close>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Close>
->(({ className, ...props }, ref) => (
-  <ToastPrimitives.Close
-    ref={ref}
-    className={cn(
-      'absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600',
-      className
-    )}
-    toast-close=""
     {...props}
   >
-    <X className="h-4 w-4" />
-  </ToastPrimitives.Close>
+    <div className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-border shadow-md" />
+  </NavigationMenuPrimitive.Indicator>
 ));
-ToastClose.displayName = ToastPrimitives.Close.displayName;
-
-const ToastTitle = React.forwardRef<
-  React.ElementRef<typeof ToastPrimitives.Title>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title>
->(({ className, ...props }, ref) => (
-  <ToastPrimitives.Title
-    ref={ref}
-    className={cn('text-sm font-semibold', className)}
-    {...props}
-  />
-));
-ToastTitle.displayName = ToastPrimitives.Title.displayName;
-
-const ToastDescription = React.forwardRef<
-  React.ElementRef<typeof ToastPrimitives.Description>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Description>
->(({ className, ...props }, ref) => (
-  <ToastPrimitives.Description
-    ref={ref}
-    className={cn('text-sm opacity-90', className)}
-    {...props}
-  />
-));
-ToastDescription.displayName = ToastPrimitives.Description.displayName;
+NavigationMenuIndicator.displayName =
+  NavigationMenuPrimitive.Indicator.displayName;
  
-// type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>;
-type ToastProps = React.ComponentProps<typeof ToastPrimitives.Root> & {
-  title?: React.ReactNode;
-  description?: React.ReactNode;
-  action?: ToastActionElement;
-};
-type ToastActionElement = React.ReactElement<typeof ToastAction>;
-//   function Toaster() {
-//   const { toasts } = useToast();
-//   return (
-//     <ToastProvider>
-//       {toasts.map(function ({ id, title, description, action, ...props }) {
-//         return (
-//           <Toast key={id} {...props}>
-//             <div className="grid gap-1">
-//               {title && <ToastTitle>{title}</ToastTitle>}
-//               {description && (
-//                 <ToastDescription>{description}</ToastDescription>
-//               )}
-//             </div>
-//             {action}
-//             <ToastClose />
-//           </Toast>
-//         );
-//       })}
-//       <ToastViewport />
-//     </ToastProvider>
-//   );
-// }
-// const ToggleGroupContext = React.createContext<
-//   VariantProps<typeof toggleVariants>
-// >({
-//   size: 'default',
-//   variant: 'default',
-// });
-
-// const ToggleGroup = React.forwardRef<
-//   React.ElementRef<typeof ToggleGroupPrimitive.Root>,
-//   React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> &
-//     VariantProps<typeof toggleVariants>
-// >(({ className, variant, size, children, ...props }, ref) => (
-//   <ToggleGroupPrimitive.Root
-//     ref={ref}
-//     className={cn('flex items-center justify-center gap-1', className)}
-//     {...props}
-//   >
-//     <ToggleGroupContext.Provider value={{ variant, size }}>
-//       {children}
-//     </ToggleGroupContext.Provider>
-//   </ToggleGroupPrimitive.Root>
-// ));
-
-// ToggleGroup.displayName = ToggleGroupPrimitive.Root.displayName;
-// const ToggleGroupItem = React.forwardRef<
-//   React.ElementRef<typeof ToggleGroupPrimitive.Item>,
-//   React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item> &
-//     VariantProps<typeof toggleVariants>
-// >(({ className, children, variant, size, ...props }, ref) => {
-//   const context = React.useContext(ToggleGroupContext);
-//   return (
-//     <ToggleGroupPrimitive.Item
-//       ref={ref}
-//       className={cn(
-//         toggleVariants({
-//           variant: context.variant || variant,
-//           size: context.size || size,
-//         }),
-//         className
-//       )}
-//       {...props}
-//     >
-//       {children}
-//     </ToggleGroupPrimitive.Item>
-//   );
-// });
-// ToggleGroupItem.displayName = ToggleGroupPrimitive.Item.displayName;
-  
 
 
+ 
 
 
-// Fix the missing Toast primitive components
-const ToastProvider = ToastPrimitives.Provider;
-const ToastViewport = React.forwardRef<
-  React.ElementRef<typeof ToastPrimitives.Viewport>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Viewport>
->(({ className, ...props }, ref) => (
-  <ToastPrimitives.Viewport
-    ref={ref}
-    className={cn(
-      'fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]',
-      className
-    )}
-    {...props}
-  />
-));
-ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
+  // CreateGoalModal-----------------------------------------
 
-const Toast = React.forwardRef<
-  React.ElementRef<typeof ToastPrimitives.Root>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
-    VariantProps<typeof toastVariants>
->(({ className, variant, ...props }, ref) => {
-  return (
-    <ToastPrimitives.Root
-      ref={ref}
-      className={cn(toastVariants({ variant }), className)}
-      {...props}
-    />
-  );
-});
-Toast.displayName = ToastPrimitives.Root.displayName;
-
-const ToastAction = React.forwardRef<
-  React.ElementRef<typeof ToastPrimitives.Action>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Action>
->(({ className, ...props }, ref) => (
-  <ToastPrimitives.Action
-    ref={ref}
-    className={cn(
-      'inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-muted/40 group-[.destructive]:hover:border-destructive/30 group-[.destructive]:hover:bg-destructive group-[.destructive]:hover:text-destructive-foreground group-[.destructive]:focus:ring-destructive',
-      className
-    )}
-    {...props}
-  />
-));
-ToastAction.displayName = ToastPrimitives.Action.displayName;
-// const toggleVariants = cva(
-//   'inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground',
-//   {
-//     variants: {
-//       variant: {
-//         default: 'bg-transparent',
-//         outline:
-//           'border border-input bg-transparent hover:bg-accent hover:text-accent-foreground',
-//       },
-//       size: {
-//         default: 'h-10 px-3',
-//         sm: 'h-9 px-2.5',
-//         lg: 'h-11 px-5',
-//       },
-//     },
-//     defaultVariants: {
-//       variant: 'default',
-//       size: 'default',
-//     },
-//   }
-// );
-// Fix the missing toastVariants
-const toastVariants = cva(
-  'group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full',
-  {
-    variants: {
-      variant: {
-        default: 'border bg-background text-foreground',
-        destructive:
-          'destructive group border-destructive bg-destructive text-destructive-foreground',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-    },
-  }
-);
-
-
-
-// Fix the missing Form components
-const FormItemContext = React.createContext<FormItemContextValue>(
-  {} as FormItemContextValue
-);
-
-interface FormItemContextValue {
-  id: string;
+interface CreateGoalModalProps {
+  onClose: () => void;
 }
 
-const FormItem = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
-  const id = React.useId();
-
-  return (
-    <FormItemContext.Provider value={{ id }}>
-      <div ref={ref} className={cn('space-y-2', className)} {...props} />
-    </FormItemContext.Provider>
-  );
-});
-FormItem.displayName = 'FormItem';
-
-const FormLabel = React.forwardRef<
-  React.ElementRef<typeof LabelPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
->(({ className, ...props }, ref) => {
-  const { error, formItemId } = useFormField();
-
-  return (
-    <LabelPrimitive.Root
-      ref={ref}
-      className={cn(
-        'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
-        error && 'text-destructive',
-        className
-      )}
-      htmlFor={formItemId}
-      {...props}
-    />
-  );
-});
-FormLabel.displayName = 'FormLabel';
-
-const FormControl = React.forwardRef<
-  React.ElementRef<typeof Slot>,
-  React.ComponentPropsWithoutRef<typeof Slot>
->(({ ...props }, ref) => {
-  const { error, formItemId, formDescriptionId, formMessageId } = useFormField();
-
-  return (
-    <Slot
-      ref={ref}
-      id={formItemId}
-      aria-describedby={
-        !error
-          ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
-      }
-      aria-invalid={!!error}
-      {...props}
-    />
-  );
-});
-FormControl.displayName = 'FormControl';
-
-const FormDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => {
-  const { formDescriptionId } = useFormField();
-
-  return (
-    <p
-      ref={ref}
-      id={formDescriptionId}
-      className={cn('text-sm text-muted-foreground', className)}
-      {...props}
-    />
-  );
-});
-FormDescription.displayName = 'FormDescription';
-
-const FormMessage = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, children, ...props }, ref) => {
-  const { error, formMessageId } = useFormField();
-  const body = error ? String(error?.message) : children;
-
-  if (!body) {
-    return null;
-  }
-
-  return (
-    <p
-      ref={ref}
-      id={formMessageId}
-      className={cn('text-sm font-medium text-destructive', className)}
-      {...props}
-    >
-      {body}
-    </p>
-  );
-});
-FormMessage.displayName = 'FormMessage';
-
-// Fix the missing useFormField hook
-function useFormField() {
-  const fieldContext = React.useContext(FormFieldContext);
-  const itemContext = React.useContext(FormItemContext);
-  const { getFieldState, formState } = useFormContext();
-
-  const fieldState = getFieldState(fieldContext.name, formState);
-
-  if (!fieldContext) {
-    throw new Error('useFormField should be used within <FormField>');
-  }
-
-  const { id } = itemContext;
-
-  return {
-    id,
-    name: fieldContext.name,
-    formItemId: `${id}-form-item`,
-    formDescriptionId: `${id}-form-item-description`,
-    formMessageId: `${id}-form-item-message`,
-    ...fieldState,
-  };
-}
-
-// Fix the missing FormFieldContext
-const FormFieldContext = React.createContext<FormFieldContextValue>(
-  {} as FormFieldContextValue
-);
-
-interface FormFieldContextValue<
-  TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
-> {
-  name: TName;
-}
-
-// Fix the missing Form component
-const Form = FormProvider;
-
-// Fix the missing FormField component
-const FormField = <
-  TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
->({
-  ...props
-}: ControllerProps<TFieldValues, TName>) => {
-  return (
-    <FormFieldContext.Provider value={{ name: props.name }}>
-      <Controller {...props} />
-    </FormFieldContext.Provider>
-  );
-};
-
-// Fix the missing badgeVariants
-const badgeVariants = cva(
-  'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
-  {
-    variants: {
-      variant: {
-        default:
-          'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
-        secondary:
-          'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        destructive:
-          'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
-        outline: 'text-foreground',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-    },
-  }
-);
-
-// Fix the missing Badge component
-function Badge({ className, variant, ...props }: BadgeProps) {
-  return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
-  );
-}// Fix the missing BadgeProps interface
-interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
-// Fix the missing buttonVariants
-const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
-  {
-    variants: {
-      variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        destructive:
-          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        outline:
-          'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
-        secondary:
-          'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-primary underline-offset-4 hover:underline',
-      },
-      size: {
-        default: 'h-10 px-4 py-2',
-        sm: 'h-9 rounded-md px-3',
-        lg: 'h-11 rounded-md px-8',
-        icon: 'h-10 w-10',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-      size: 'default',
-    },
-  }
-);
-
-// Fix the missing ButtonProps interface
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
-}
-
-// Fix the missing Button component
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'button';
-    return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      />
-    );
-  }
-);
-Button.displayName = 'Button';
-// Fix the missing labelVariants
-const labelVariants = cva(
-  'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
-);
-
-// Fix the missing Label component
-const Label = React.forwardRef<
-  React.ElementRef<typeof LabelPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
-    VariantProps<typeof labelVariants>
->(({ className, ...props }, ref) => (
-  <LabelPrimitive.Root
-    ref={ref}
-    className={cn(labelVariants(), className)}
-    {...props}
-  />
-));
-Label.displayName = LabelPrimitive.Root.displayName;
-
-// Fix the missing Input component
-const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
-  ({ className, type, ...props }, ref) => {
-    return (
-      <input
-        type={type}
-        className={cn(
-          'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-          className
-        )}
-        ref={ref}
-        {...props}
-      />
-    );
-  }
-);
-Input.displayName = 'Input';
-
-
-
-
-// Fix the missing Textarea component
-const Textarea = React.forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement>>(
-  ({ className, ...props }, ref) => {
-    return (
-      <textarea
-        className={cn(
-          'flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-          className
-        )}
-        ref={ref}
-        {...props}
-      />
-    );
-  }
-);
-Textarea.displayName = 'Textarea';
-
-
-
-
-// Fix the missing Toggle component
-const Toggle = React.forwardRef<
-  React.ElementRef<typeof TogglePrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root> &
-    VariantProps<typeof toggleVariants>
->(({ className, variant, size, ...props }, ref) => (
-  <TogglePrimitive.Root
-    ref={ref}
-    className={cn(toggleVariants({ variant, size }), className)}
-    {...props}
-  />
-));
-Toggle.displayName = TogglePrimitive.Root.displayName;
-
-// Fix the missing toggleVariants
-const toggleVariants = cva(
-  'inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground',
-  {
-    variants: {
-      variant: {
-        default: 'bg-transparent',
-        outline:
-          'border border-input bg-transparent hover:bg-accent hover:text-accent-foreground',
-      },
-      size: {
-        default: 'h-10 px-3',
-        sm: 'h-9 px-2.5',
-        lg: 'h-11 px-5',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-      size: 'default',
-    },
-  }
-);
-// Fix the missing Tooltip components
-const TooltipProvider = TooltipPrimitive.Provider;
-const Tooltip = TooltipPrimitive.Root;
-const TooltipTrigger = TooltipPrimitive.Trigger;
-
-// Fix the missing TooltipContent component
-const TooltipContent = React.forwardRef<
-  React.ElementRef<typeof TooltipPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
->(({ className, sideOffset = 4, ...props }, ref) => (
-  <TooltipPrimitive.Content
-    ref={ref}
-    sideOffset={sideOffset}
-    className={cn(
-      'z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-      className
-    )}
-    {...props}
-  />
-));
-TooltipContent.displayName = TooltipPrimitive.Content.displayName;
-
-
-// Fix the missing Popover components
-const Popover = PopoverPrimitive.Root;
-const PopoverTrigger = PopoverPrimitive.Trigger;
-
-// Fix the missing PopoverContent component
-const PopoverContent = React.forwardRef<
-  React.ElementRef<typeof PopoverPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
->(({ className, align = 'center', sideOffset = 4, ...props }, ref) => (
-  <PopoverPrimitive.Portal>
-    <PopoverPrimitive.Content
-      ref={ref}
-      align={align}
-      sideOffset={sideOffset}
-      className={cn(
-        'z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-        className
-      )}
-      {...props}
-    />
-  </PopoverPrimitive.Portal>
-));
-PopoverContent.displayName = PopoverPrimitive.Content.displayName;
-
-
-// Fix the missing Select components
-const Select = SelectPrimitive.Root;
-const SelectGroup = SelectPrimitive.Group;
-const SelectValue = SelectPrimitive.Value;
-
-// Fix the missing Select components
-const SelectTrigger = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
-      className
-    )}
-    {...props}
-  >
-    {children}
-    <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 opacity-50" />
-    </SelectPrimitive.Icon>
-  </SelectPrimitive.Trigger>
-));
-SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
-
-const SelectContent = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = 'popper', ...props }, ref) => (
-  <SelectPrimitive.Portal>
-    <SelectPrimitive.Content
-      ref={ref}
-      className={cn(
-        'relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-        position === 'popper' &&
-          'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
-        className
-      )}
-      position={position}
-      {...props}
-    >
-      <SelectScrollUpButton />
-      <SelectPrimitive.Viewport
-        className={cn(
-          'p-1',
-          position === 'popper' &&
-            'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]'
-        )}
-      >
-        {children}
-      </SelectPrimitive.Viewport>
-      <SelectScrollDownButton />
-    </SelectPrimitive.Content>
-  </SelectPrimitive.Portal>
-));
-SelectContent.displayName = SelectPrimitive.Content.displayName;
-
-const SelectScrollUpButton = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.ScrollUpButton>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>
->(({ className, ...props }, ref) => (
-  <SelectPrimitive.ScrollUpButton
-    ref={ref}
-    className={cn(
-      'flex cursor-default items-center justify-center py-1',
-      className
-    )}
-    {...props}
-  >
-    <ChevronUp className="h-4 w-4" />
-  </SelectPrimitive.ScrollUpButton>
-));
-SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
-
-const SelectScrollDownButton = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.ScrollDownButton>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>
->(({ className, ...props }, ref) => (
-  <SelectPrimitive.ScrollDownButton
-    ref={ref}
-    className={cn(
-      'flex cursor-default items-center justify-center py-1',
-      className
-    )}
-    {...props}
-  >
-    <ChevronDown className="h-4 w-4" />
-  </SelectPrimitive.ScrollDownButton>
-));
-SelectScrollDownButton.displayName =
-  SelectPrimitive.ScrollDownButton.displayName;
-
-const SelectItem = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
->(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Item
-    ref={ref}
-    className={cn(
-      'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-      className
-    )}
-    {...props}
-  >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-      <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4" />
-      </SelectPrimitive.ItemIndicator>
-    </span>
-
-    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
-  </SelectPrimitive.Item>
-));
-SelectItem.displayName = SelectPrimitive.Item.displayName;
-
-const SelectSeparator = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Separator>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
->(({ className, ...props }, ref) => (
-  <SelectPrimitive.Separator
-    ref={ref}
-    className={cn('-mx-1 my-1 h-px bg-muted', className)}
-    {...props}
-  />
-));
-SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
-
-// Fix the missing Tabs components
-const Tabs = TabsPrimitive.Root;
-
-// Fix the missing TabsList component
-const TabsList = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.List>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.List
-    ref={ref}
-    className={cn(
-      'inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground',
-      className
-    )}
-    {...props}
-  />
-));
-TabsList.displayName = TabsPrimitive.List.displayName;
-
-// Fix the missing TabsTrigger component
-const TabsTrigger = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      'inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
-      className
-    )}
-    {...props}
-  />
-));
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
-
-
-// Fix the missing TabsContent component
-const TabsContent = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.Content
-    ref={ref}
-    className={cn(
-      'mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-      className
-    )}
-    {...props}
-  />
-));
-TabsContent.displayName = TabsPrimitive.Content.displayName;
-
-
- 
-
-// Fix the missing Dialog components
-const Dialog = DialogPrimitive.Root;
-const DialogTrigger = DialogPrimitive.Trigger;
-const DialogPortal = DialogPrimitive.Portal;
-const DialogClose = DialogPrimitive.Close;
-
-// Fix the missing DialogOverlay component
-const DialogOverlay = React.forwardRef<
-React.ElementRef<typeof DialogPrimitive.Overlay>,
-React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
->(({ className, ...props }, ref) => (
-<DialogPrimitive.Overlay
-ref={ref}
-className={cn(
-  'fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-  className
-)}
-{...props}
-/>
-));
-DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
-
-// Fix the missing DialogContent component
-const DialogContent = React.forwardRef<
-React.ElementRef<typeof DialogPrimitive.Content>,
-React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-<DialogPortal>
-<DialogOverlay />
-<DialogPrimitive.Content
-  ref={ref}
-  className={cn(
-    'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg',
-    className
-  )}
-  {...props}
->
-  {children}
-  <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-    <X className="h-4 w-4" />
-    <span className="sr-only">Close</span>
-  </DialogPrimitive.Close>
-</DialogPrimitive.Content>
-</DialogPortal>
-));
-DialogContent.displayName = DialogPrimitive.Content.displayName;
-
-// Fix the missing DialogHeader component
-const DialogHeader = ({
-className,
-...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-<div
-className={cn(
-  'flex flex-col space-y-1.5 text-center sm:text-left',
-  className
-)}
-{...props}
-/>
-);
-DialogHeader.displayName = 'DialogHeader';
-
-// Fix the missing DialogFooter component
-const DialogFooter = ({
-className,
-...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-<div
-className={cn(
-  'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
-  className
-)}
-{...props}
-/>
-);
-DialogFooter.displayName = 'DialogFooter';
-
-// Fix the missing DialogTitle component
-const DialogTitle = React.forwardRef<
-React.ElementRef<typeof DialogPrimitive.Title>,
-React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
->(({ className, ...props }, ref) => (
-<DialogPrimitive.Title
-ref={ref}
-className={cn(
-  'text-lg font-semibold leading-none tracking-tight',
-  className
-)}
-{...props}
-/>
-));
-DialogTitle.displayName = DialogPrimitive.Title.displayName;
-
-// Fix the missing DialogDescription component
-const DialogDescription = React.forwardRef<
-React.ElementRef<typeof DialogPrimitive.Description>,
-React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
->(({ className, ...props }, ref) => (
-<DialogPrimitive.Description
-ref={ref}
-className={cn('text-sm text-muted-foreground', className)}
-{...props}
-/>
-));
-DialogDescription.displayName = DialogPrimitive.Description.displayName;
-
-// Fix the missing DropdownMenu components
-const DropdownMenu = DropdownMenuPrimitive.Root;
-const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
-const DropdownMenuGroup = DropdownMenuPrimitive.Group;
-const DropdownMenuPortal = DropdownMenuPrimitive.Portal;
-const DropdownMenuSub = DropdownMenuPrimitive.Sub;
-const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
-
-// Fix the missing DropdownMenuContent component
-const DropdownMenuContent = React.forwardRef<
-  React.ElementRef<typeof DropdownMenuPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
->(({ className, sideOffset = 4, ...props }, ref) => (
-  <DropdownMenuPrimitive.Portal>
-    <DropdownMenuPrimitive.Content
-      ref={ref}
-      sideOffset={sideOffset}
-      className={cn(
-        'z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-        className
-      )}
-      {...props}
-    />
-  </DropdownMenuPrimitive.Portal>
-));
-DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName;
-
-// Fix the missing DropdownMenuItem component
-const DropdownMenuItem = React.forwardRef<
-  React.ElementRef<typeof DropdownMenuPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
-    inset?: boolean;
-  }
->(({ className, inset, ...props }, ref) => (
-  <DropdownMenuPrimitive.Item
-    ref={ref}
-    className={cn(
-      'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-      inset && 'pl-8',
-      className
-    )}
-    {...props}
-  />
-));
-DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
-
-// Fix the missing DropdownMenuCheckboxItem component
-const DropdownMenuCheckboxItem = React.forwardRef<
-  React.ElementRef<typeof DropdownMenuPrimitive.CheckboxItem>,
-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.CheckboxItem>
->(({ className, children, checked, ...props }, ref) => (
-  <DropdownMenuPrimitive.CheckboxItem
-    ref={ref}
-    className={cn(
-      'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-      className
-    )}
-    checked={checked}
-    {...props}
-  >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-      <DropdownMenuPrimitive.ItemIndicator>
-        <Check className="h-4 w-4" />
-      </DropdownMenuPrimitive.ItemIndicator>
-    </span>
-    {children}
-  </DropdownMenuPrimitive.CheckboxItem>
-));
-DropdownMenuCheckboxItem.displayName =
-  DropdownMenuPrimitive.CheckboxItem.displayName;
-
-// Fix the missing DropdownMenuRadioItem component
-const DropdownMenuRadioItem = React.forwardRef<
-  React.ElementRef<typeof DropdownMenuPrimitive.RadioItem>,
-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem>
->(({ className, children, ...props }, ref) => (
-  <DropdownMenuPrimitive.RadioItem
-    ref={ref}
-    className={cn(
-      'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-      className
-    )}
-    {...props}
-  >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-      <DropdownMenuPrimitive.ItemIndicator>
-        <Circle className="h-2 w-2 fill-current" />
-      </DropdownMenuPrimitive.ItemIndicator>
-    </span>
-    {children}
-  </DropdownMenuPrimitive.RadioItem>
-));
-DropdownMenuRadioItem.displayName = DropdownMenuPrimitive.RadioItem.displayName;
-
-// Fix the missing DropdownMenuLabel component
-const DropdownMenuLabel = React.forwardRef<
-  React.ElementRef<typeof DropdownMenuPrimitive.Label>,
-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label> & {
-    inset?: boolean;
-  }
->(({ className, inset, ...props }, ref) => (
-  <DropdownMenuPrimitive.Label
-    ref={ref}
-    className={cn(
-      'px-2 py-1.5 text-sm font-semibold',
-      inset && 'pl-8',
-      className
-    )}
-    {...props}
-  />
-));
-DropdownMenuLabel.displayName = DropdownMenuPrimitive.Label.displayName;
-// const Toggle = React.forwardRef<
-//   React.ElementRef<typeof TogglePrimitive.Root>,
-//   React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root> &
-//     VariantProps<typeof toggleVariants>
-// >(({ className, variant, size, ...props }, ref) => (
-//   <TogglePrimitive.Root
-//     ref={ref}
-//     className={cn(toggleVariants({ variant, size, className }))}
-//     {...props}
-//   />
-// ));
-
-// Toggle.displayName = TogglePrimitive.Root.displayName; 
-// const TooltipProvider = TooltipPrimitive.Provider;
-
-// const Tooltip = TooltipPrimitive.Root;
-
-// const TooltipTrigger = TooltipPrimitive.Trigger;
-
-// const TooltipContent = React.forwardRef<
-//   React.ElementRef<typeof TooltipPrimitive.Content>,
-//   React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
-// >(({ className, sideOffset = 4, ...props }, ref) => (
-//   <TooltipPrimitive.Content
-//     ref={ref}
-//     sideOffset={sideOffset}
-//     className={cn(
-//       'z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-//       className
-//     )}
-//     {...props}
-//   />
-// ));
-// TooltipContent.displayName = TooltipPrimitive.Content.displayName;
-
- 
- 
-
- 
-
- 
- 
- 
- 
-  
- 
-
-  
- 
-
-
-
-
-import './globals.css';
-// import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
- import { ThemeProvider } from 'next-themes';
-
-const inter = Inter({ subsets: ['latin'] });
- 
-const skills = [
-  {
-    category: 'Frontend Development',
-    icon: <FiLayout />,
-    items: ['React', 'Next.js', 'TailwindCSS', 'HTML5', 'CSS3', 'JavaScript/TypeScript']
-  },
-  {
-    category: 'Cloud Engineering',
-    icon: <FiCloud />,
-    items: ['AWS', 'Docker', 'CI/CD', 'Serverless', 'Microservices']
-  },
-  {
-    category: 'Tools & Technologies',
-    icon: <FiCode />,
-    items: ['Git', 'GitHub Actions', 'REST APIs', 'GraphQL', 'Node.js']
-  }
-];
-
-const aboutText = `A software developer skilled in designing, developing, and implementing innovative software solutions. Proficient in programming languages, software architecture, and debugging, with a strong focus on creating user-friendly applications. Experienced in collaborating with cross-functional teams, meeting project deadlines, and continuously enhancing technical skills to stay updated with industry trends. Passionate about problem-solving and leveraging technology to drive efficiency and deliver high-quality solutions.`;
-
-    function TeamsPage() {
-  const [displayedText, setDisplayedText] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    if (currentIndex < aboutText.length) {
-      const timeout = setTimeout(() => {
-        setDisplayedText(prev => prev + aboutText[currentIndex]);
-        setCurrentIndex(prev => prev + 1);
-      }, 20); // Adjust speed of typing here
-
-      return () => clearTimeout(timeout);
-    }
-  }, [currentIndex]);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const { selectedGoal } = useGoals();
-
-  return (
+function CreateGoalModal({ onClose }: CreateGoalModalProps) {
+  const { addGoal } = useGoals();
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [category, setCategory] = useState<GoalCategory>('personal');
+  const [dueDate, setDueDate] = useState('');
+  const [isTeamGoal, setIsTeamGoal] = useState(false);
+  const [priority, setPriority] = useState<GoalPriority>('medium');
+  const [target, setTarget] = useState(100);
+  const [unit, setUnit] = useState('%');
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800" suppressContentEditableWarning>
-                <Navbar onCreateGoal={() => setShowCreateModal(true)} />
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" suppressContentEditableWarning>
-        <div className="max-w-4xl mx-auto">
-          {/* Profile Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-white dark:bg-slate-800 rounded-lg shadow-xl overflow-hidden mb-12"
-          >
-            <div className="aspect-w-16 aspect-h-9 max-h-[400px] overflow-hidden justify-center flex items-center">
-              <Image
-                src="https://i.postimg.cc/yxwg4krP/IMG-0667-removebg.png"
-                alt="Profile"
-                className="  center rounded-lg"
-                width={500}
-                height={500}
-              />
-            </div>
-            
-            {/* Animated Text */}
-            <div className="p-8">
-              <motion.h1 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="text-3xl font-bold text-gray-900 dark:text-white mb-4 text-center" 
-              >
-                About Me
-              </motion.h1>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-center mb-4">
-                {displayedText}
-                <motion.span
-                  initial={{ opacity: 1 }}
-                  animate={{ opacity: 0 }}
-                  transition={{ repeat: Infinity, duration: 0.8 }}
-                  className="inline-block w-0.5 h-4 bg-blue-500 ml-1"
-                >
-                  |
-                </motion.span>
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Skills Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="bg-white dark:bg-slate-800 rounded-lg shadow-xl p-8"
-          >
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">Skills & Expertise</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {skills.map((skillGroup, index) => (
-                <motion.div
-                  key={skillGroup.category}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7 + (index * 0.2) }}
-                  className="space-y-4"
-                >
-                  <div className="flex items-center space-x-2 text-blue-500 dark:text-blue-400">
-                    <span className="text-xl">{skillGroup.icon}</span>
-                    <h3 className="font-semibold">{skillGroup.category}</h3>
-                  </div>
-                  
-                  <ul className="space-y-2">
-                    {skillGroup.items.map((skill, skillIndex) => (
-                      <motion.li
-                        key={skill}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.9 + (index * 0.1) + (skillIndex * 0.1) }}
-                        className="flex items-center space-x-2 text-gray-600 dark:text-gray-300"
-                      >
-                        <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
-                        <span>{skill}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </main>
-         <Footer />
+    // Validate fields
+    const newErrors: Record<string, string> = {};
+    
+    if (!title.trim()) {
+      newErrors.title = 'Title is required';
+    }
+    
+    if (!dueDate) {
+      newErrors.dueDate = 'Due date is required';
+    } else if (new Date(dueDate) < new Date()) {
+      newErrors.dueDate = 'Due date cannot be in the past';
+    }
+    
+    if (target <= 0) {
+      newErrors.target = 'Target must be greater than 0';
+    }
+    
+    setErrors(newErrors);
+    
+    if (Object.keys(newErrors).length === 0) {
+      // Add new goal
+      const newGoal: Omit<Goal, 'id' | 'createdAt' | 'isCompleted' | 'progress' | 'milestones' | 'comments'> = {
+        title,
+        description,
+        category,
+        target,
+        unit,
+        dueDate: new Date(dueDate).toISOString(),
+        userId: currentUser.id,
+        isTeamGoal,
+        priority,
+        teamId: isTeamGoal ? '1' : undefined, // For simplicity, use the first team
+      };
       
-            {showCreateModal && (
-              <CreateGoalModal onClose={() => setShowCreateModal(false)} />
-            )}
-      
-            {selectedGoal && (
-              <GoalDetailsModal/>
-            )}
-    </div>
-  );
-}
- 
-//   const metadata: Metadata = {
-//   title: 'GoalTrack - Track Your Goals and Progress',
-//   description: 'Set, track, and achieve your personal and team goals with powerful visualization tools',
-// };
+      addGoal(newGoal);
+      onClose();
+    }
+  };
 
-export function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+  const overlay = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 }
+  };
+
+  const modal = {
+    hidden: { opacity: 0, y: 50, scale: 0.95 },
+    visible: { opacity: 1, y: 0, scale: 1 }
+  };
+
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>        
-         <main className='bg-white dark:bg-slate-900  ' suppressContentEditableWarning>
-           <GoalProvider>
-            {children}
-          </GoalProvider>
-          </main>
-        </ThemeProvider>
-      </body>
-    </html>
+    <AnimatePresence>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        exit="hidden"
+        variants={overlay}
+        className="fixed inset-0 bg-black bg-opacity-50 z-50 mt-15  p-2 flex items-center justify-center pt-80 lg:pt-40   overflow-y-auto h-auto  "
+        onClick={onClose}
+      >
+        <motion.div
+          variants={modal}
+          transition={{ type: 'spring', damping: 25, stiffness: 500 }}
+          className="bg-white dark:bg-slate-800 rounded-lg max-w-xl w-full shadow-xl overflow-auto"
+          onClick={e => e.stopPropagation()}
+        >
+          <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-slate-700">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Create New Goal</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+            >
+              <FiX className="h-5 w-5" />
+            </button>
+          </div>
+          
+          <form onSubmit={handleSubmit} className="p-6">
+            <div className="space-y-5">
+              <div>
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Goal Title*
+                </label>
+                <input
+                  id="title"
+                  type="text"
+                  value={title}
+                  onChange={e => setTitle(e.target.value)}
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white ${
+                    errors.title ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-slate-600'
+                  }`}
+                  placeholder="What do you want to achieve?"
+                />
+                {errors.title && (
+                  <p className="mt-1 text-sm text-red-500">{errors.title}</p>
+                )}
+              </div>
+              
+              <div>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Description
+                </label>
+                <textarea
+                  id="description"
+                  value={description}
+                  onChange={e => setDescription(e.target.value)}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                  placeholder="Describe your goal in detail"
+                />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Category
+                  </label>
+                  <select
+                    id="category"
+                    value={category}
+                    onChange={e => setCategory(e.target.value as GoalCategory)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                  >
+                    <option value="personal">Personal</option>
+                    <option value="work">Work</option>
+                    <option value="health">Health</option>
+                    <option value="learning">Learning</option>
+                    <option value="finance">Finance</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Due Date*
+                  </label>
+                  <input
+                    id="dueDate"
+                    type="date"
+                    value={dueDate}
+                    onChange={e => setDueDate(e.target.value)}
+                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white ${
+                      errors.dueDate ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-slate-600'
+                    }`}
+                  />
+                  {errors.dueDate && (
+                    <p className="mt-1 text-sm text-red-500">{errors.dueDate}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label htmlFor="priority" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Priority
+                  </label>
+                  <select
+                    id="priority"
+                    value={priority}
+                    onChange={e => setPriority(e.target.value as GoalPriority)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Goal Type
+                  </label>
+                  <div className="flex items-center space-x-4">
+                    <label className="inline-flex items-center">
+                      <input
+                        type="radio"
+                        className="form-radio text-blue-500 focus:ring-blue-500 h-4 w-4"
+                        checked={!isTeamGoal}
+                        onChange={() => setIsTeamGoal(false)}
+                      />
+                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Personal</span>
+                    </label>
+                    <label className="inline-flex items-center">
+                      <input
+                        type="radio"
+                        className="form-radio text-blue-500 focus:ring-blue-500 h-4 w-4"
+                        checked={isTeamGoal}
+                        onChange={() => setIsTeamGoal(true)}
+                      />
+                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Team</span>
+                    </label>
+                  </div>
+                </div>
+                
+                <div>
+                  <label htmlFor="target" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Target Value
+                  </label>
+                  <input
+                    id="target"
+                    type="number"
+                    value={target}
+                    onChange={e => setTarget(parseInt(e.target.value, 10))}
+                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white ${
+                      errors.target ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-slate-600'
+                    }`}
+                    min="1"
+                  />
+                  {errors.target && (
+                    <p className="mt-1 text-sm text-red-500">{errors.target}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label htmlFor="unit" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Unit
+                  </label>
+                  <input
+                    id="unit"
+                    type="text"
+                    value={unit}
+                    onChange={e => setUnit(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                    placeholder="%, miles, books, etc."
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-6 flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-600"
+              >
+                Cancel
+              </button>
+              <motion.button
+                type="submit"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Create Goal
+              </motion.button>
+            </div>
+          </form>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 }
+// home--------------======================
+
  
 
   function Home() {
@@ -6699,7 +6095,6 @@ export function RootLayout({
   }
 
   return (
- 
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       <Navbar onCreateGoal={() => setShowCreateModal(true)} />
       
@@ -6722,14 +6117,18 @@ export function RootLayout({
         <GoalDetailsModal />
       )}
     </div>
- 
   );
-
 }
-export default function App() {
+export default function App( ) {
   return (
-    <GoalProvider>
-      <Home />
-    </GoalProvider>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <main   className={inter.className}  >
+      <GoalProvider >
+      <Home/>
+    </GoalProvider>  
+        </main>
+ 
+    </ThemeProvider>
+   
   );
 }
